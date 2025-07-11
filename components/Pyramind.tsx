@@ -1,34 +1,45 @@
 "use client";
 
 import {
+    Center,
     Environment,
+    Grid,
     MeshTransmissionMaterial,
-    OrbitControls,
     useGLTF,
+    useTexture,
 } from "@react-three/drei";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { useRef, useState, useEffect } from "react";
 import * as THREE from "three";
-import { EffectComposer, Bloom } from "@react-three/postprocessing";
+import { EffectComposer, Bloom, Vignette } from "@react-three/postprocessing";
 
-export const Pyramind = () => {
+export interface PyramindProps {
+  onSectionChange?: (index: number) => void;
+}
+
+
+
+export const Pyramind: React.FC<PyramindProps> = ({ onSectionChange }) => {
     return (
-        <Canvas className="w-full h-full" camera={{ position: [0, 2, 5], fov: 45 }}>
-            <color attach="background" args={["#efefef"]} />
+        <Canvas className="w-full h-full" camera={{ position: [0, 0.5, 10], fov: 22 }}>
+            <color attach="background" args={["#000"]} />
             <ambientLight intensity={0.3} />
             <directionalLight position={[5, 5, 5]} intensity={0.5} color={"#66ccff"} />
             <directionalLight position={[-5, 5, -2]} intensity={0.3} color={"#335577"} />
-            <OrbitControls enableZoom={false} autoRotate autoRotateSpeed={0.3} />
-            <Model />
-            <Environment files="/moonless_golf_2k.hdr"  />
-            {/* <EffectComposer> */}
-            {/*     <Bloom intensity={1.2} luminanceThreshold={0.1} /> */}
-            {/* </EffectComposer> */}
+            {/* <OrbitControls/> */}
+            <Center position={[0, -0.25, 0]}>
+                <Model onSectionChange={onSectionChange} />
+            </Center>
+            <Environment files="https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/dancing_hall_1k.hdr" environmentIntensity={0.4}/>
+            <EffectComposer>
+                <Bloom/>
+                <Vignette opacity={1.0}/>
+            </EffectComposer>
         </Canvas>
     );
 };
 
-const Model = () => {
+const Model : React.FC<PyramindProps> = ({onSectionChange}) => {
     const { nodes } = useGLTF("/Pyramind.glb") as any;
     const refs = [
         useRef<THREE.Mesh>(null),
@@ -36,19 +47,20 @@ const Model = () => {
         useRef<THREE.Mesh>(null),
         useRef<THREE.Mesh>(null),
     ];
-    const [hoverIndex, setHoverIndex] = useState<number | null>(null);
+    const [hoverIndex, setHoverIndex] = useState<number>(-1);
+
+    useEffect(() => {
+        onSectionChange?.(hoverIndex);
+    }, [hoverIndex, onSectionChange]);
+
     const groupRef = useRef<THREE.Group>(null);
     const pieceHeight = 2 / 4;
 
     useFrame(({ clock }) => {
-        const t = clock.getElapsedTime();
-
-        // Floating oscillation
         if (groupRef.current) {
-            groupRef.current.position.y = Math.sin(t) * 0.05;
+            groupRef.current.rotation.y += 0.005;
         }
 
-        // Piece animation
         refs.forEach((ref, index) => {
             const mesh = ref.current;
             if (!mesh) return;
@@ -61,46 +73,55 @@ const Model = () => {
             const targetY = offset;
             const targetRot = offset > 0 ? Math.PI * 0.25 : 0;
 
-            // mesh.position.y = THREE.MathUtils.lerp(mesh.position.y, targetY, 0.1);
-            // mesh.rotation.y = THREE.MathUtils.lerp(mesh.rotation.y, targetRot, 0.1);
+            mesh.position.y = THREE.MathUtils.lerp(mesh.position.y, targetY, 0.1);
+            mesh.rotation.y = THREE.MathUtils.lerp(mesh.rotation.y, targetRot, 0.1);
         });
     });
 
-    useEffect(() => {
-        for (let i = 0; i < 4; i++) {
-            const geom = nodes[(i + 1).toString()].geometry;
-            geom.computeBoundingBox();
-            geom.boundingBox?.expandByScalar(2.5);
-        }
-    }, [nodes]);
+    const maps = useTexture(["/group.svg",  "/package.svg", "/gear.svg", "/euro.svg"]);
 
     return (
         <group ref={groupRef}>
             {refs.map((ref, index) => (
-                <group key={index}>
+                <group key={`pyramid-block-${index}`}>
                     <mesh 
-                        scale={[2, 1, 2]}
+                        scale={[1, 1, 1]}
                         geometry={nodes[(index + 1).toString()].geometry}
                         onPointerEnter={() => setHoverIndex(index)}
-                        onPointerLeave={() => setHoverIndex(null)}
+                        onPointerLeave={() => setHoverIndex(-1)}
                         visible={false}
-                    >
-                        {/* <meshNormalMaterial/> */}
-                    </mesh>
+                    />
                     <mesh
                         ref={ref}
                         geometry={nodes[(index + 1).toString()].geometry}
                     >
-                        <meshStandardMaterial
-                            color={hoverIndex === index ? "#66ccff" : "#0a2940"}
-                            transparent
-                            opacity={0.9}
-                            roughness={0.4}
-                            metalness={0.1}
+                        <MeshTransmissionMaterial
+                            roughness={0.2}
+                            thickness={0.15}
+                            ior={1.1}
+                            chromaticAberration={0.4}
+                            anisotropy={0.0}
+                            distortion={0.0}
+                            distortionScale={0.3}
+                            clearcoat={1.0}
+                            clearcoatRoughness={0.0}
+                            attenuationDistance={0.2}
+                            attenuationColor={"#fff"}
+                            color={hoverIndex >= index ? "#2080ff" : "white"}
+                            background={new THREE.Color(hoverIndex >= index ? "white" : "#242424")}
                         />
                     </mesh>
+                    <sprite position={[0, index/2 + 0.25, 0]} scale={[0.2, 0.2, 0.2]}>
+                        <spriteMaterial map={maps[index]} color={"white"} transparent/>
+                    </sprite> 
                 </group>
             ))}
+            <Grid
+                infiniteGrid
+                cellThickness={4.0}
+                fadeStrength={8.0}
+                fadeDistance={50}
+            />
         </group>
     );
 };
