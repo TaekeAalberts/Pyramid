@@ -96,19 +96,19 @@ const Model : React.FC<PyramindProps> = ({onSectionChange}) => {
                         geometry={nodes[(index + 1).toString()].geometry}
                     >
                         <MeshTransmissionMaterial
-                            roughness={0.2}
+                            roughness={0.3}
                             thickness={0.15}
                             ior={1.1}
                             chromaticAberration={0.4}
                             anisotropy={0.0}
                             distortion={0.0}
                             distortionScale={0.3}
-                            clearcoat={1.0}
-                            clearcoatRoughness={0.0}
+                            clearcoat={0.0}
+                            //clearcoatRoughness={0.0}
                             attenuationDistance={0.2}
                             attenuationColor={"#fff"}
-                            color={hoverIndex >= index ? "#2080ff" : "white"}
-                            background={new THREE.Color(hoverIndex >= index ? "white" : "#242424")}
+                            color={hoverIndex >= index ? "#01B9F1" : "#0089CC"}
+                            background={new THREE.Color(hoverIndex >= index ? "white" : "gray")}
                         />
                     </mesh>
                     <sprite position={[0, index/2 + 0.25, 0]} scale={[0.2, 0.2, 0.2]}>

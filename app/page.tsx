@@ -5,25 +5,25 @@ import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const SECTIONS = [
-  { title: "Teamwork",  color: "text-sky-300",
+  { title: "Finances",  color: "text-sky-300",
     links: [
-      { label: "About the team", href: "#team" },
-      { label: "Open positions", href: "#jobs" },
+      // { label: "About the team", href: "#team" },
+      // { label: "Open positions", href: "#jobs" },
     ] },
-  { title: "Logistics", color: "text-emerald-300",
+  { title: "Product", color: "text-emerald-300",
     links: [
-      { label: "Our process", href: "#process" },
-      { label: "Warehouse tour", href: "#tour" },
+      // { label: "Our process", href: "#process" },
+      // { label: "Warehouse tour", href: "#tour" },
     ] },
-  { title: "Settings",  color: "text-amber-300",
+  { title: "Internal Processes",  color: "text-amber-300",
     links: [
-      { label: "Account", href: "#account" },
-      { label: "Preferences", href: "#prefs" },
+      // { label: "Account", href: "#account" },
+      // { label: "Preferences", href: "#prefs" },
     ] },
-  { title: "Finance",   color: "text-pink-300",
+  { title: "Resources",   color: "text-pink-300",
     links: [
-      { label: "Pricing", href: "#pricing" },
-      { label: "Investors", href: "#investors" },
+      // { label: "Pricing", href: "#pricing" },
+      // { label: "Investors", href: "#investors" },
     ] },
 ];
 
@@ -73,44 +73,6 @@ export default function Home() {
         )}
       </AnimatePresence>
 
-      {/* ---------- Quick‑links panel ---------- */}
-      <AnimatePresence>
-        {visible && section !== -1 && (
-          <motion.aside
-            key={`links-${section}`}
-            className="pointer-events-auto absolute top-0 right-0 z-30 flex h-full w-60 flex-col gap-4 bg-white/5 backdrop-blur-md p-8"
-            initial={{ x: 80, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            exit={{ x: 80, opacity: 0 }}
-            transition={{ type: "spring", stiffness: 260, damping: 30 }}
-          >
-            <h2 className="mb-2 text-xl font-semibold text-white/80 tracking-wide">
-              {SECTIONS[section].title}
-            </h2>
-            <nav className="flex flex-col gap-3 text-base">
-              {SECTIONS[section].links.map((l) => (
-                <a
-                  key={l.href}
-                  href={l.href}
-                  className="group inline-flex items-center gap-2 text-slate-100 hover:text-white"
-                >
-                  {/* chevron icon */}
-                  <svg
-                    className="h-4 w-4 opacity-70 transition-transform group-hover:translate-x-1"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    viewBox="0 0 24 24"
-                  >
-                    <path d="M9 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                  <span>{l.label}</span>
-                </a>
-              ))}
-            </nav>
-          </motion.aside>
-        )}
-      </AnimatePresence>
     </div>
   );
 }
