@@ -4,20 +4,18 @@ import {
     Center,
     Environment,
     Grid,
-    MeshTransmissionMaterial,
+    // MeshTransmissionMaterial,
     useGLTF,
     useTexture,
 } from "@react-three/drei";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { useRef, useState, useEffect } from "react";
 import * as THREE from "three";
-import { EffectComposer, Bloom, Vignette } from "@react-three/postprocessing";
+// import { EffectComposer, Bloom, Vignette } from "@react-three/postprocessing";
 
 export interface PyramindProps {
   onSectionChange?: (index: number) => void;
 }
-
-
 
 export const Pyramind: React.FC<PyramindProps> = ({ onSectionChange }) => {
     return (
@@ -30,11 +28,11 @@ export const Pyramind: React.FC<PyramindProps> = ({ onSectionChange }) => {
             <Center position={[0, -0.25, 0]}>
                 <Model onSectionChange={onSectionChange} />
             </Center>
-            <Environment files="https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/dancing_hall_1k.hdr" environmentIntensity={0.4}/>
-            <EffectComposer>
-                <Bloom/>
-                <Vignette opacity={1.0}/>
-            </EffectComposer>
+            <Environment files="https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/dancing_hall_1k.hdr" environmentIntensity={1.0}/>
+            {/* <EffectComposer> */}
+            {/*     <Bloom/> */}
+            {/*     <Vignette opacity={1.0}/> */}
+            {/* </EffectComposer> */}
         </Canvas>
     );
 };
@@ -56,7 +54,7 @@ const Model : React.FC<PyramindProps> = ({onSectionChange}) => {
     const groupRef = useRef<THREE.Group>(null);
     const pieceHeight = 2 / 4;
 
-    useFrame(({ clock }) => {
+    useFrame(() => {
         if (groupRef.current) {
             groupRef.current.rotation.y += 0.005;
         }
@@ -87,7 +85,7 @@ const Model : React.FC<PyramindProps> = ({onSectionChange}) => {
                     <mesh 
                         scale={[1, 1, 1]}
                         geometry={nodes[(index + 1).toString()].geometry}
-                        onPointerEnter={() => setHoverIndex(index)}
+                        onPointerOver={() => setHoverIndex(index)}
                         onPointerLeave={() => setHoverIndex(-1)}
                         visible={false}
                     />
@@ -95,20 +93,17 @@ const Model : React.FC<PyramindProps> = ({onSectionChange}) => {
                         ref={ref}
                         geometry={nodes[(index + 1).toString()].geometry}
                     >
-                        <MeshTransmissionMaterial
+                        <meshPhysicalMaterial
                             roughness={0.3}
                             thickness={0.15}
-                            ior={1.1}
-                            chromaticAberration={0.4}
+                            ior={1.4}
                             anisotropy={0.0}
-                            distortion={0.0}
-                            distortionScale={0.3}
-                            clearcoat={0.0}
-                            //clearcoatRoughness={0.0}
-                            attenuationDistance={0.2}
-                            attenuationColor={"#fff"}
+                            clearcoat={1.0}
+                            clearcoatRoughness={1.0}
                             color={hoverIndex >= index ? "#01B9F1" : "#0089CC"}
-                            background={new THREE.Color(hoverIndex >= index ? "white" : "gray")}
+                            transparent
+                            reflectivity={0.8}
+                            opacity={hoverIndex >= index ? 1.0 : 0.4}
                         />
                     </mesh>
                     <sprite position={[0, index/2 + 0.25, 0]} scale={[0.2, 0.2, 0.2]}>
