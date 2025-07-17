@@ -106,7 +106,11 @@ const Model : React.FC<PyramindProps> = ({onSectionChange}) => {
                             opacity={hoverIndex >= index ? 1.0 : 0.4}
                         />
                     </mesh>
-                    <sprite position={[0, index/2 + 0.25, 0]} scale={[0.2, 0.2, 0.2]}>
+                    <sprite position={[0, index/2 + 0.25, 0]} scale={[0.2, 0.2, 0.2]}
+                        onClick={() => window.open("https://fmis.aalberts-kara.de/fmis-finanzen", '_blank')}
+                        onPointerOver={() => document.body.style.cursor = "pointer"}
+                        onPointerLeave={() => document.body.style.cursor = "default"}
+                    >
                         <spriteMaterial map={maps[index]} color={"white"} transparent/>
                     </sprite> 
                 </group>
