@@ -18,7 +18,7 @@ export interface PyramindProps {
 
 export const Pyramind: React.FC<PyramindProps> = ({ onSectionChange }) => {
     return (
-        <Canvas className="w-full h-full" camera={{ position: [0, 0.5, 10], fov: 22 }}>
+        <Canvas className="w-full h-full" camera={{ position: [0, 0.5, 10], fov: 75, zoom: 4 }}>
             <color attach="background" args={["#000"]} />
             <ambientLight intensity={0.3} />
             <directionalLight position={[5, 5, 5]} intensity={0.5} color={"#66ccff"} />
@@ -85,11 +85,11 @@ const Model : React.FC<PyramindProps> = ({onSectionChange}) => {
                     <mesh 
                         scale={[1, 1, 1]}
                         geometry={nodes[(index + 1).toString()].geometry}
-                        onPointerOver={() => setHoverIndex(index)}
+                        onPointerEnter={() => setTimeout(() => setHoverIndex(index), 100)}
                         onPointerLeave={() => setHoverIndex(-1)}
                         visible={false}
                     />
-              <group ref={ref}>
+              <group ref={ref} >
                     <points geometry={nodes[(index + 1).toString()].geometry} scale={1.01}>
                       <pointsMaterial
                         size={0.09}
