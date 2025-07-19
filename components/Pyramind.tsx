@@ -4,14 +4,13 @@ import {
     Center,
     Environment,
     Grid,
-    // MeshTransmissionMaterial,
     useGLTF,
     useTexture,
 } from "@react-three/drei";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { useRef, useState, useEffect } from "react";
 import * as THREE from "three";
-// import { EffectComposer, Bloom, Vignette } from "@react-three/postprocessing";
+import { EffectComposer, Bloom, Vignette } from "@react-three/postprocessing";
 
 export interface PyramindProps {
   onSectionChange?: (index: number) => void;
@@ -29,10 +28,10 @@ export const Pyramind: React.FC<PyramindProps> = ({ onSectionChange }) => {
                 <Model onSectionChange={onSectionChange} />
             </Center>
             <Environment files="https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/dancing_hall_1k.hdr" environmentIntensity={1.0}/>
-            {/* <EffectComposer> */}
-            {/*     <Bloom/> */}
-            {/*     <Vignette opacity={1.0}/> */}
-            {/* </EffectComposer> */}
+            <EffectComposer>
+                <Bloom luminanceThreshold={0.1} luminanceSmoothing={0.9} intensity={1.5} />
+                <Vignette eskil={false} offset={0.1} darkness={1.1} />
+            </EffectComposer>
         </Canvas>
     );
 };
@@ -77,6 +76,7 @@ const Model : React.FC<PyramindProps> = ({onSectionChange}) => {
     });
 
     const maps = useTexture(["/group.svg",  "/package.svg", "/gear.svg", "/euro.svg"]);
+    const circleTexture = useTexture("/circle.png");
 
     return (
         <group ref={groupRef}>
@@ -89,23 +89,34 @@ const Model : React.FC<PyramindProps> = ({onSectionChange}) => {
                         onPointerLeave={() => setHoverIndex(-1)}
                         visible={false}
                     />
-                    <mesh
-                        ref={ref}
-                        geometry={nodes[(index + 1).toString()].geometry}
-                    >
-                        <meshPhysicalMaterial
-                            roughness={0.3}
-                            thickness={0.15}
-                            ior={1.4}
-                            anisotropy={0.0}
-                            clearcoat={1.0}
-                            clearcoatRoughness={1.0}
-                            color={hoverIndex >= index ? "#01B9F1" : "#0089CC"}
-                            transparent
-                            reflectivity={0.8}
-                            opacity={hoverIndex >= index ? 1.0 : 0.4}
-                        />
-                    </mesh>
+              <group ref={ref}>
+                    <points geometry={nodes[(index + 1).toString()].geometry} scale={1.01}>
+                      <pointsMaterial
+                        size={0.09}
+                        sizeAttenuation
+                        map={circleTexture}
+                        transparent
+                        alphaTest={0.5}
+                        color={hoverIndex === index ? "#00ffff" : "#00ccff"}
+                      />
+                    </points>
+                      <mesh
+                          geometry={nodes[(index + 1).toString()].geometry}
+                      >
+                          <meshPhysicalMaterial
+                              roughness={0.3}
+                              thickness={0.15}
+                              ior={1.4}
+                              anisotropy={0.0}
+                              clearcoat={1.0}
+                              clearcoatRoughness={1.0}
+                              color={hoverIndex >= index ? "#01B9F1" : "#0089CC"}
+                              transparent
+                              reflectivity={0.8}
+                              opacity={hoverIndex >= index ? 1.0 : 0.4}
+                          />
+                      </mesh>
+                    </group>
                     <sprite position={[0, index/2 + 0.25, 0]} scale={[0.2, 0.2, 0.2]}
                         onClick={() => window.open("https://fmis.aalberts-kara.de/fmis-finanzen", '_blank')}
                         onPointerOver={() => document.body.style.cursor = "pointer"}
