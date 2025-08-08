@@ -131,6 +131,12 @@ const Model : React.FC<PyramindProps> = ({onSectionChange}) => {
     });
 
     const maps = useTexture(["/group.svg",  "/package.svg", "/gear.svg", "/euro.svg"]);
+    const links = [
+        "https://fmis.aalberts-kara.de/fdd/ressourcen/",
+        "https://fmis.aalberts-kara.de/fdd/interne-prozesse/",
+        "https://fmis.aalberts-kara.de/fdd/produkt/",
+        "https://fmis.aalberts-kara.de/fdd/finanzen/",
+    ];
 
     const edgeRefs = useRef<(any | null)[]>([]);
 
@@ -185,7 +191,7 @@ const Model : React.FC<PyramindProps> = ({onSectionChange}) => {
                     </group>
                     <sprite position={[0, index/2 + 0.25, 0.01]} scale={[0.2, 0.2, 0.2]}
                         renderOrder={100}
-                        onClick={() => window.open("https://fmis.aalberts-kara.de/fmis-finanzen", '_blank')}
+                        onClick={() => window.open(links[index], "__blank")}
                         onPointerOver={() => document.body.style.cursor = "pointer"}
                         onPointerLeave={() => document.body.style.cursor = "default"}
                     >

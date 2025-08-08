@@ -6,22 +6,22 @@ import { motion, AnimatePresence } from "framer-motion";
 
 const SECTIONS = [
   {
-    title: "Finances",
+    title: "Finanzen",
     color: "text-sky-300",
     description: "Track revenue, expenses, and profitability metrics."
   },
   {
-    title: "Product",
+    title: "Produkt",
     color: "text-emerald-300",
     description: "Monitor product performance, features, and quality."
   },
   {
-    title: "Internal Processes",
+    title: "Interne Prozesse",
     color: "text-amber-300",
     description: "Evaluate operational efficiency and workflow health."
   },
   {
-    title: "Resources",
+    title: "Ressourcen",
     color: "text-pink-300",
     description: "Manage team capacity, tools, and infrastructure."
   }
