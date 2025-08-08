@@ -130,7 +130,7 @@ const Model : React.FC<PyramindProps> = ({onSectionChange}) => {
         });
     });
 
-    const maps = useTexture(["/group.svg",  "/package.svg", "/gear.svg", "/euro.svg"]);
+    const maps = useTexture(["/group.svg",  "/gear.svg", "/package.svg", "/euro.svg"]);
     const links = [
         "https://fmis.aalberts-kara.de/fdd/ressourcen/",
         "https://fmis.aalberts-kara.de/fdd/interne-prozesse/",
