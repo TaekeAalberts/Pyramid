@@ -84,9 +84,10 @@ const Model : React.FC<PyramindProps> = ({onSectionChange}) => {
         useRef<THREE.Mesh>(null),
         useRef<THREE.Mesh>(null),
     ];
+
+    const [hoverAnimatedFactor, setHoverAnimatedFactor] = useState<number>(0);
     const [hoverIndex, setHoverIndex] = useState<number>(-1);
 
-    // animate the grid colors
     const baseColor  = new THREE.Color("#2080ff");
     const hoverColor = new THREE.Color("#ffffff");
     const activeGridColor = baseColor;
@@ -99,14 +100,18 @@ const Model : React.FC<PyramindProps> = ({onSectionChange}) => {
     const groupRef = useRef<THREE.Group>(null);
     const pieceHeight = 2 / 4;
 
+    const lerp = (x: number, y: number, t: number): number => x + (y - x) * t;
+
     useFrame(() => {
         if (groupRef.current) {
             groupRef.current.rotation.y += 0.005;
         }
         if (gridRef.current) {
             if (hoverIndex >= 0) {
+                setHoverAnimatedFactor(lerp(hoverAnimatedFactor, 1.0, 0.1));
                 activeGridColor.lerp(hoverColor, 0.1);
             } else {
+                setHoverAnimatedFactor(lerp(hoverAnimatedFactor, 0.0, 0.1));
                 activeGridColor.lerp(baseColor, 0.01);
             }
             gridRef.current.material.uniforms.cellColor.value = activeGridColor;
@@ -138,19 +143,8 @@ const Model : React.FC<PyramindProps> = ({onSectionChange}) => {
         "https://fmis.aalberts-kara.de/fdd/finanzen/",
     ];
 
-    const edgeRefs = useRef<(any | null)[]>([]);
-
-    useEffect(() => {
-        if (!edgeRefs.current.length) {
-            edgeRefs.current = refs.map(() => null);
-        }
-    }, [refs]);
-
     useFrame(({ clock }) => {
         const time = clock.getElapsedTime();
-        edgeRefs.current.forEach((ref) => {
-            if (ref) ref.uTime = time;
-        });
 
         refs.map(ref => {
             ref.current && ref.current.traverse(child => {
@@ -158,7 +152,7 @@ const Model : React.FC<PyramindProps> = ({onSectionChange}) => {
                     child.material.uniforms.uTime.value = time;
                 }
             });
-        })
+        });
     });
 
     return (
@@ -186,16 +180,28 @@ const Model : React.FC<PyramindProps> = ({onSectionChange}) => {
                                 transparent
                                 depthWrite={hoverIndex >= 0}
                                 blending={THREE.NormalBlending}
-                                />
+                            />
                         </mesh>
+                        <lineSegments depthWrite={true}>
+                            <edgesGeometry args={[nodes[(index + 1).toString()].geometry]} attach="geometry"/>
+                            <lineBasicMaterial color="white" transparent opacity={0.2}/>
+                        </lineSegments>
                     </group>
-                    <sprite position={[0, index/2 + 0.25, 0.01]} scale={[0.2, 0.2, 0.2]}
+                    <sprite
+                        position={[0, index/2 + 0.25, 0.01]} 
+                        name={`sprite-${index}`}
+                        // scale={[0.2, 0.2, 0.2]}
+                        scale={[
+                            (hoverAnimatedFactor * 0.1) + 0.2,
+                            (hoverAnimatedFactor * 0.1) + 0.2,
+                            (hoverAnimatedFactor * 0.1) + 0.2,
+                        ]}
                         renderOrder={100}
                         onClick={() => window.open(links[index], "__blank")}
                         onPointerOver={() => document.body.style.cursor = "pointer"}
                         onPointerLeave={() => document.body.style.cursor = "default"}
                     >
-                        <spriteMaterial map={maps[index]} color={"white"} transparent/>
+                        <spriteMaterial map={maps[index]} color={hoverIndex >= 0 ? "#2080ff" : "white"} transparent/>
                     </sprite> 
                 </group>
             ))}
