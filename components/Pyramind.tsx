@@ -182,7 +182,7 @@ const Model : React.FC<PyramindProps> = ({onSectionChange}) => {
                                 blending={THREE.NormalBlending}
                             />
                         </mesh>
-                        <lineSegments depthWrite={true}>
+                        <lineSegments>
                             <edgesGeometry args={[nodes[(index + 1).toString()].geometry]} attach="geometry"/>
                             <lineBasicMaterial color="white" transparent opacity={0.2}/>
                         </lineSegments>
