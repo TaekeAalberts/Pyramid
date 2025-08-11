@@ -203,7 +203,6 @@ const Model : React.FC<PyramindProps> = ({onSectionChange}) => {
                             (hoverAnimatedFactor * 0.1) + 0.2,
                         ]}
                         renderOrder={100}
-                        onClick={() => window.open(links[index])}
                         onPointerOver={() => document.body.style.cursor = "pointer"}
                         onPointerLeave={() => document.body.style.cursor = "default"}
                     >
