@@ -10,6 +10,7 @@ import { Canvas, useFrame } from "@react-three/fiber";
 import { useRef, useState, useEffect } from "react";
 import * as THREE from "three";
 import { EffectComposer, Bloom, Vignette } from "@react-three/postprocessing";
+import Grass from "./Grass";
 
 export interface PyramindProps {
     onSectionChange?: (index: number) => void;
@@ -18,9 +19,10 @@ export interface PyramindProps {
 export const Pyramind: React.FC<PyramindProps> = ({ onSectionChange }) => {
     return (
         <Canvas className="w-full h-full" camera={{ position: [0, 0.5, 10], fov: 75, zoom: 4 }}>
-            <color attach="background" args={["#000"]} />
+            <color attach="background" args={["black"]} />
             <Center position={[0, -0.25, 0]}>
                 <Model onSectionChange={onSectionChange} />
+                {/* <Grass scale={0.1} position={[0, -0.5, -6]}/> */}
             </Center>
             <EffectComposer>
                 <Bloom luminanceThreshold={0.1} luminanceSmoothing={0.9} intensity={0.8} />
@@ -135,7 +137,7 @@ const Model : React.FC<PyramindProps> = ({onSectionChange}) => {
         });
     });
 
-    const maps = useTexture(["/group.svg",  "/gear.svg", "/package.svg", "/euro.svg"]);
+    const maps = useTexture(["/group.png", "/gear.png", "/package.png", "/euro.png"]);
     const links = [
         "https://fmis.aalberts-kara.de/fdd/ressourcen/",
         "https://fmis.aalberts-kara.de/fdd/interne-prozesse/",
@@ -190,13 +192,13 @@ const Model : React.FC<PyramindProps> = ({onSectionChange}) => {
                     <sprite
                         position={[0, index/2 + 0.25, 0.01]} 
                         name={`sprite-${index}`}
-                        // scale={[0.2, 0.2, 0.2]}
                         scale={[
                             (hoverAnimatedFactor * 0.1) + 0.2,
                             (hoverAnimatedFactor * 0.1) + 0.2,
                             (hoverAnimatedFactor * 0.1) + 0.2,
                         ]}
                         renderOrder={100}
+                        onClick={() => window.open(links[index])}
                         onPointerOver={() => document.body.style.cursor = "pointer"}
                         onPointerLeave={() => document.body.style.cursor = "default"}
                     >
