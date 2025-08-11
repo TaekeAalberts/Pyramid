@@ -10,7 +10,7 @@ import { Canvas, useFrame } from "@react-three/fiber";
 import { useRef, useState, useEffect } from "react";
 import * as THREE from "three";
 import { EffectComposer, Bloom, Vignette } from "@react-three/postprocessing";
-import Grass from "./Grass";
+// import Grass from "./Grass";
 
 export interface PyramindProps {
     onSectionChange?: (index: number) => void;
@@ -137,7 +137,12 @@ const Model : React.FC<PyramindProps> = ({onSectionChange}) => {
         });
     });
 
-    const maps = useTexture(["/group.png", "/gear.png", "/package.png", "/euro.png"]);
+    const maps = useTexture([
+        "/group.png",
+        "/gear.png",
+        "/package.png",
+        "/euro.png"
+    ]);
     const links = [
         "https://fmis.aalberts-kara.de/fdd/ressourcen/",
         "https://fmis.aalberts-kara.de/fdd/interne-prozesse/",
