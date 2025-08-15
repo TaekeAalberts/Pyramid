@@ -9,42 +9,49 @@ import {
 import { Canvas, useFrame } from "@react-three/fiber";
 import { useRef, useState, useEffect } from "react";
 import * as THREE from "three";
-import { EffectComposer, Bloom, Vignette } from "@react-three/postprocessing";
-// import Grass from "./Grass";
+import { EffectComposer, Bloom } from "@react-three/postprocessing";
+import Grass from "./Grass";
 
 export interface PyramindProps {
     onSectionChange?: (index: number) => void;
 }
 
 export const Pyramind: React.FC<PyramindProps> = ({ onSectionChange }) => {
+
     return (
         <Canvas className="w-full h-full" camera={{ position: [0, 0.5, 10], fov: 75, zoom: 4 }}>
-            <color attach="background" args={["black"]} />
+            {/* <color attach="background" args={["white"]} /> */}
+
             <Center position={[0, -0.25, 0]}>
                 <Model onSectionChange={onSectionChange} />
-                {/* <Grass scale={0.1} position={[0, -0.5, -6]}/> */}
             </Center>
+            <Bg/>
             <EffectComposer>
                 <Bloom luminanceThreshold={0.1} luminanceSmoothing={0.9} intensity={0.8} />
-                <Vignette eskil={false} offset={0.1} darkness={1.1} />
+                {/* <Vignette eskil={false} offset={0.01} darkness={1.0} /> */}
             </EffectComposer>
         </Canvas>
     );
 };
+const Bg = () => {
+    const texture = useTexture("/sky.jpeg");
+    texture.colorSpace = THREE.SRGBColorSpace;
+    return <primitive attach="background" object={texture} />
+}
 
 const vertexShader = `
-varying vec3 vNormal;
-varying vec3 vViewDir;
-varying vec3 vPosition;
+    varying vec3 vNormal;
+    varying vec3 vViewDir;
+    varying vec3 vPosition;
 
-void main() {
-  vNormal = normalMatrix * normal;
-  vec4 viewPos = modelViewMatrix * vec4(position, 1.0);
-  vViewDir = normalize(-viewPos.xyz);
-  vPosition = position;
+    void main() {
+        vNormal = normalMatrix * normal;
+        vec4 viewPos = modelViewMatrix * vec4(position, 1.0);
+        vViewDir = normalize(-viewPos.xyz);
+        vPosition = position;
 
-  gl_Position = projectionMatrix * viewPos;
-}
+        gl_Position = projectionMatrix * viewPos;
+    }
 `;
 
 const fragmentShader = `
@@ -56,25 +63,25 @@ const fragmentShader = `
     varying vec3 vViewDir;
 
     void main() {
-      vec3 blue = vec3(0.0, 0.0, 1.0);
-      vec3 lightBlue = vec3(0.0, 0.1, 0.8);
+        vec3 blue = vec3(0.0, 0.0, 1.0);
+        vec3 lightBlue = vec3(0.0, 0.1, 0.8);
 
-      float fresnel = pow(1.0 - dot(normalize(vNormal), normalize(vViewDir)), 2.0);
-      float anim = sin(uTime * 2.0 + vPosition.y * 5.0) * 0.5 + 0.5;
+        float fresnel = pow(1.0 - dot(normalize(vNormal), normalize(vViewDir)), 2.0);
+        float anim = sin(uTime * 2.0 + vPosition.y * 5.0) * 0.5 + 0.5;
 
-      float upFacing = dot(normalize(vNormal), vec3(0.0, 1.0, 0.0));
-      if (uIsHover) {
-          vec3 glow = mix(lightBlue, vec3(0.2, 0.8, 1.0), fresnel * anim);
-          if (upFacing > 0.7) {
-              gl_FragColor = vec4(vec3(1.0, 1.0, 1.0), 1.0);
-          } else {
-              gl_FragColor = vec4(glow, 1.0);
-          }
-      } else {
-          if (upFacing > 0.7) discard;
-          vec3 glow = mix(blue, vec3(0.2, 0.8, 1.0), fresnel * anim);
-          gl_FragColor = vec4(glow, 0.4);
-      }
+        float upFacing = dot(normalize(vNormal), vec3(0.0, 1.0, 0.0));
+        if (uIsHover) {
+            vec3 glow = mix(lightBlue, vec3(0.2, 0.8, 1.0), fresnel * anim);
+            if (upFacing > 0.7) {
+                gl_FragColor = vec4(vec3(1.0, 1.0, 1.0), 1.0);
+            } else {
+                gl_FragColor = vec4(glow, 1.0);
+            }
+        } else {
+            if (upFacing > 0.7) discard;
+            vec3 glow = mix(blue, vec3(0.2, 0.8, 1.0), fresnel * anim);
+            gl_FragColor = vec4(glow, 0.4);
+        }
     }
 `;
 
@@ -108,12 +115,15 @@ const Model : React.FC<PyramindProps> = ({onSectionChange}) => {
         if (groupRef.current) {
             groupRef.current.rotation.y += 0.005;
         }
+        if (hoverIndex >= 0) {
+            setHoverAnimatedFactor(lerp(hoverAnimatedFactor, 1.0, 0.1));
+        } else {
+            setHoverAnimatedFactor(lerp(hoverAnimatedFactor, 0.0, 0.1));
+        }
         if (gridRef.current) {
             if (hoverIndex >= 0) {
-                setHoverAnimatedFactor(lerp(hoverAnimatedFactor, 1.0, 0.1));
                 activeGridColor.lerp(hoverColor, 0.1);
             } else {
-                setHoverAnimatedFactor(lerp(hoverAnimatedFactor, 0.0, 0.1));
                 activeGridColor.lerp(baseColor, 0.01);
             }
             gridRef.current.material.uniforms.cellColor.value = activeGridColor;
@@ -214,14 +224,16 @@ const Model : React.FC<PyramindProps> = ({onSectionChange}) => {
                     </sprite> 
                 </group>
             ))}
-            <Grid
-                ref={gridRef}
-                cellColor={baseColor}
-                infiniteGrid
-                cellThickness={3.0}
-                fadeStrength={8.0}
-                fadeDistance={50}
-            />
+
+            <Grass scale={0.1} position={[0, 0, 0]}/>
+            {/* <Grid */}
+            {/*     ref={gridRef} */}
+            {/*     cellColor={baseColor} */}
+            {/*     infiniteGrid */}
+            {/*     cellThickness={3.0} */}
+            {/*     fadeStrength={8.0} */}
+            {/*     fadeDistance={50} */}
+            {/* /> */}
         </group>
     );
 };
