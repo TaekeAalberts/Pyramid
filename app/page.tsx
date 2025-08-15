@@ -8,22 +8,22 @@ const SECTIONS = [
   {
     title: "Finanzen",
     color: "text-sky-300",
-    description: "Track revenue, expenses, and profitability metrics."
+    description: "Umsatz, Kosten und Profitabilität überwachen"
   },
   {
     title: "Produkt",
     color: "text-emerald-300",
-    description: "Monitor product performance, features, and quality."
+    description: "Produktleistung, Funktionen und Qualität überwachen"
   },
   {
     title: "Interne Prozesse",
     color: "text-amber-300",
-    description: "Evaluate operational efficiency and workflow health."
+    description: "Leistungsfähigkeit und Stabilität der Arbeitsabläufe beurteilen"
   },
   {
     title: "Ressourcen",
     color: "text-pink-300",
-    description: "Manage team capacity, tools, and infrastructure."
+    description: "Teamkapazitäten, Tools und Infrastruktur verwalten"
   }
 ];
 
