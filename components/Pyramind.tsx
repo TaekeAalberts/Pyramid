@@ -5,11 +5,14 @@ import {
     Grid,
     useGLTF,
     useTexture,
+    Stats,
+    OrbitControls,
+    Environment
 } from "@react-three/drei";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { useRef, useState, useEffect } from "react";
 import * as THREE from "three";
-import { EffectComposer, Bloom } from "@react-three/postprocessing";
+import { EffectComposer, Bloom, DepthOfField } from "@react-three/postprocessing";
 import Grass from "./Grass";
 
 export interface PyramindProps {
@@ -20,69 +23,79 @@ export const Pyramind: React.FC<PyramindProps> = ({ onSectionChange }) => {
 
     return (
         <Canvas className="w-full h-full" camera={{ position: [0, 0.5, 10], fov: 75, zoom: 4 }}>
-            {/* <color attach="background" args={["white"]} /> */}
-
-            <Center position={[0, -0.25, 0]}>
+            {/* <fog args={["black", 10, 15]} attach="fog"/> */}
+            <Center position={[0, 0.0, 0]}>
                 <Model onSectionChange={onSectionChange} />
             </Center>
+            <Stats/>
+            <Grass scale={0.1} position={[0, -1, -10]}/>
             <Bg/>
+            <OrbitControls/>
+            <ambientLight color="white" intensity={0.3}/>
+            {/* <Environment preset="night"/> */}
             <EffectComposer>
                 <Bloom luminanceThreshold={0.1} luminanceSmoothing={0.9} intensity={0.8} />
+                <DepthOfField
+                    //focusDistance={0.05} // Distance to the focal plane
+                    //focalLength={0.2} // Focal length of the lens
+                    bokehScale={4} // Amount of blur applied
+                    height={480} // Render height for the effect
+                />
                 {/* <Vignette eskil={false} offset={0.01} darkness={1.0} /> */}
             </EffectComposer>
         </Canvas>
     );
 };
 const Bg = () => {
-    const texture = useTexture("/sky.jpeg");
+    const texture = useTexture("/sky.jpg");
     texture.colorSpace = THREE.SRGBColorSpace;
     return <primitive attach="background" object={texture} />
 }
 
 const vertexShader = `
-    varying vec3 vNormal;
-    varying vec3 vViewDir;
-    varying vec3 vPosition;
+varying vec3 vNormal;
+varying vec3 vViewDir;
+varying vec3 vPosition;
 
-    void main() {
-        vNormal = normalMatrix * normal;
-        vec4 viewPos = modelViewMatrix * vec4(position, 1.0);
-        vViewDir = normalize(-viewPos.xyz);
-        vPosition = position;
+void main() {
+vNormal = normalMatrix * normal;
+vec4 viewPos = modelViewMatrix * vec4(position, 1.0);
+vViewDir = normalize(-viewPos.xyz);
+vPosition = position;
 
-        gl_Position = projectionMatrix * viewPos;
-    }
+gl_Position = projectionMatrix * viewPos;
+}
 `;
 
 const fragmentShader = `
-    uniform bool uIsHover;
-    varying vec2 vUv;
-    varying vec3 vPosition;
-    uniform float uTime;
-    varying vec3 vNormal;
-    varying vec3 vViewDir;
+uniform bool uIsHover;
+varying vec2 vUv;
+varying vec3 vPosition;
+uniform float uTime;
+varying vec3 vNormal;
+varying vec3 vViewDir;
 
-    void main() {
-        vec3 blue = vec3(0.0, 0.0, 1.0);
-        vec3 lightBlue = vec3(0.0, 0.1, 0.8);
+void main() {
+vec3 blue = vec3(0.0, 0.0, 1.0);
+vec3 lightBlue = vec3(0.0, 0.1, 0.8);
 
-        float fresnel = pow(1.0 - dot(normalize(vNormal), normalize(vViewDir)), 2.0);
-        float anim = sin(uTime * 2.0 + vPosition.y * 5.0) * 0.5 + 0.5;
+float fresnel = pow(1.0 - dot(normalize(vNormal), normalize(vViewDir)), 2.0);
+float anim = sin(uTime * 2.0 + vPosition.y * 5.0) * 0.5 + 0.5;
 
-        float upFacing = dot(normalize(vNormal), vec3(0.0, 1.0, 0.0));
-        if (uIsHover) {
-            vec3 glow = mix(lightBlue, vec3(0.2, 0.8, 1.0), fresnel * anim);
-            if (upFacing > 0.7) {
-                gl_FragColor = vec4(vec3(1.0, 1.0, 1.0), 1.0);
-            } else {
-                gl_FragColor = vec4(glow, 1.0);
-            }
-        } else {
-            if (upFacing > 0.7) discard;
-            vec3 glow = mix(blue, vec3(0.2, 0.8, 1.0), fresnel * anim);
-            gl_FragColor = vec4(glow, 0.4);
-        }
-    }
+float upFacing = dot(normalize(vNormal), vec3(0.0, 1.0, 0.0));
+if (uIsHover) {
+vec3 glow = mix(lightBlue, vec3(0.2, 0.8, 1.0), fresnel * anim);
+if (upFacing > 0.7) {
+gl_FragColor = vec4(vec3(1.0, 1.0, 1.0), 1.0);
+} else {
+gl_FragColor = vec4(glow, 1.0);
+}
+} else {
+if (upFacing > 0.7) discard;
+vec3 glow = mix(blue, vec3(0.2, 0.8, 1.0), fresnel * anim);
+gl_FragColor = vec4(glow, 0.4);
+}
+}
 `;
 
 const Model : React.FC<PyramindProps> = ({onSectionChange}) => {
@@ -215,7 +228,7 @@ const Model : React.FC<PyramindProps> = ({onSectionChange}) => {
                         renderOrder={100}
                         onClick={() => { 
                             if (window.top) window.top.location.href = links[index];
-                            else window.location.href = links[index];
+                                else window.location.href = links[index];
                         }}
                         onPointerOver={() => document.body.style.cursor = "pointer"}
                         onPointerLeave={() => document.body.style.cursor = "default"}
@@ -224,16 +237,6 @@ const Model : React.FC<PyramindProps> = ({onSectionChange}) => {
                     </sprite> 
                 </group>
             ))}
-
-            <Grass scale={0.1} position={[0, 0, 0]}/>
-            {/* <Grid */}
-            {/*     ref={gridRef} */}
-            {/*     cellColor={baseColor} */}
-            {/*     infiniteGrid */}
-            {/*     cellThickness={3.0} */}
-            {/*     fadeStrength={8.0} */}
-            {/*     fadeDistance={50} */}
-            {/* /> */}
         </group>
     );
 };

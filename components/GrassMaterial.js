@@ -84,7 +84,7 @@ const GrassMaterial = shaderMaterial(
         vPosition = rotateVectorByQuaternion(vPosition, direction);
       
        //Apply wind
-       float halfAngle = noise * 0.15;
+       float halfAngle = noise * 0.05;
         vPosition = rotateVectorByQuaternion(vPosition, normalize(vec4(sin(halfAngle), 0.0, -sin(halfAngle), cos(halfAngle))));
         //UV for texture
         vUv = uv;
@@ -114,7 +114,7 @@ const GrassMaterial = shaderMaterial(
         gl_FragColor = col;
 
         #include <tonemapping_fragment>
-#include <colorspace_fragment>
+        #include <colorspace_fragment>
       }`,
   (self) => {
     self.side = THREE.DoubleSide
