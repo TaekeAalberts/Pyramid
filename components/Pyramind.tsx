@@ -28,7 +28,7 @@ export const Pyramind: React.FC<PyramindProps> = ({ onSectionChange }) => {
                         <Model onSectionChange={onSectionChange} />
                     </Center>
                     {/* <Stats/> */}
-                    <Grass scale={0.1} position={[0, -2, -15]}/>
+                    <Grass scale={0.1} position={[0, -2, -24]}/>
                     <Bg/>
                 </Suspense>
                     <ambientLight color="white" intensity={0.6}/>
@@ -66,7 +66,7 @@ const Bg = () => {
     return (
         <>
             {/* <mesh position={[0, -0.3, -50]} scale={50.0}> */}
-            <mesh position={[0, 2.2, -50]} scale={50.0}>
+            <mesh position={[0, 2.4, -50]} scale={50.0}>
                 <planeGeometry/>
                 <meshBasicMaterial map={texture}/>
             </mesh>

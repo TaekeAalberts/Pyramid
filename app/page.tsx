@@ -48,16 +48,16 @@ export default function Home() {
                 {section !== -1 && (
                     <motion.div
                         key={`headline-${section}`}
-                        className="pointer-events-none absolute bottom-10 left-0 right-0 flex flex-col items-start justify-end p-20 z-20"
+                        className="pointer-events-none absolute bottom-10 left-0 right-0 flex flex-col items-start justify-end p-20 z-20 text-shadow-lg"
                         initial={{ opacity: 0, y: 40 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: 40 }}
                         transition={{ type: "spring", stiffness: 260, damping: 25 }}
                     >
-                        <h1 className={`font-geist-mono font-extrabold text-7xl`} >
+                        <h1 className={`font-geist-mono font-extrabold text-7xl text-shadow-lg`} >
                             {SECTIONS[section].title}
                         </h1>
-                        <p className="mt-4 max-w-lg text-lg text-neutral-300">
+                        <p className="mt-4 max-w-lg text-lg text-white text-shadow-lg">
                             {SECTIONS[section].description}
                         </p>
                     </motion.div>
