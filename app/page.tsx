@@ -31,33 +31,33 @@ export default function Home() {
     const [section, setSection]   = useState<number>(-1); // -1 = idle
 
     return (
-        <div className="relative w-full h-screen overflow-hidden bg-[#181818]">
+        <div className="relative w-full h-dvh overflow-hidden bg-[#181818]">
             {/* 3‑D scene */}
             <div className="w-full h-full">
                 <Pyramind onSectionChange={setSection} />
             </div>
-            <div className="absolute top-10 left-10 flex z-50 font-bold text-xl/5 text-shadow-xs text-[#002B5B]">
+            <div className="absolute top-4 left-4 md:top-10 md:left-10 flex z-50 font-bold text-base/4 md:text-xl/5 text-shadow-xs text-[#002B5B]">
                 Farm<br/>
                 Manangement<br/>
                 Information<br/>
                 System<br/>
             </div>
-            <div className="absolute top-10 right-10 text-4xl font-bold text-shadow-sm text-[#002B5B]">Friedland Dairy</div>
+            <div className="absolute top-4 right-4 md:top-10 md:right-10 text-xl md:text-4xl font-bold text-shadow-sm text-[#002B5B]">Friedland Dairy</div>
 
             <AnimatePresence>
                 {section !== -1 && (
                     <motion.div
                         key={`headline-${section}`}
-                        className="pointer-events-none absolute bottom-10 left-0 right-0 flex flex-col items-start justify-end p-20 z-20 text-shadow-lg"
+                        className="pointer-events-none absolute bottom-4 md:bottom-10 left-0 right-0 flex flex-col items-start justify-end p-4 pb-0 md:p-20 z-20 text-shadow-lg"
                         initial={{ opacity: 0, y: 40 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: 40 }}
                         transition={{ type: "spring", stiffness: 260, damping: 25 }}
                     >
-                        <h1 className={`font-geist-mono font-extrabold text-7xl text-shadow-lg`} >
+                        <h1 className={`font-geist font-extrabold text-3xl/5 md:text-7xl text-shadow-lg`} >
                             {SECTIONS[section].title}
                         </h1>
-                        <p className="mt-4 max-w-lg text-lg text-white text-shadow-lg">
+                        <p className="mt-4 max-w-lg text-sm md:text-lg text-white text-shadow-lg">
                             {SECTIONS[section].description}
                         </p>
                     </motion.div>

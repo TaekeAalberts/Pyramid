@@ -7,13 +7,54 @@ import {
     Loader,
     PerspectiveCamera
 } from "@react-three/drei";
-import { Canvas, useFrame } from "@react-three/fiber";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { useRef, useState, useEffect, Suspense } from "react";
 import * as THREE from "three";
 import Grass from "./Grass";
 
 export interface PyramindProps {
     onSectionChange?: (index: number) => void;
+}
+
+
+function ResponsiveCamera() {
+    const { camera, size } = useThree();
+    const isMobile = size.width < 768;
+
+    useEffect(() => {
+        if (size.width < 768) {
+            camera.position.z = 18;
+        } else {
+            camera.position.z = 10;
+        }
+        camera.updateProjectionMatrix();
+    }, [size, camera]);
+
+    return (
+        <>
+            {!isMobile  &&
+                <Grass
+                    scale={0.1} position={[0, -2, -24]}/>
+            }
+            {!isMobile  &&
+                <Grass
+                    rotation={[4*Math.PI/180, 0, 0]}
+                    scale={0.2} 
+                    inRows={false}
+                    tipColor={new THREE.Color("darkgreen")}
+                    bottomColor={new THREE.Color("darkgreen")}
+                    position={[-6, -2.0, -10]}
+                    options = {{ 
+                        baseWidth: 0.09,
+                        baseHeight: 1.4,
+                        joints: 5 
+                    }}
+                    groundWidth = {50}
+                    groundLength = {50}
+                    instances = {50_00}
+                />}
+        </>
+    );
 }
 
 export const Pyramind: React.FC<PyramindProps> = ({ onSectionChange }) => {
@@ -29,27 +70,11 @@ export const Pyramind: React.FC<PyramindProps> = ({ onSectionChange }) => {
                         position={[0, 0.5, 10]}
                         zoom={4}
                     />
+                    <ResponsiveCamera/>
                     <Center position={[0, 0.0, 0]}>
                         <Model onSectionChange={onSectionChange} />
                     </Center>
                     {/* <Stats/> */}
-                    <Grass scale={0.1} position={[0, -2, -24]}/>
-                    <Grass
-                        rotation={[4*Math.PI/180, 0, 0]}
-                        scale={0.2} 
-                        inRows={false}
-                        tipColor={new THREE.Color("darkgreen")}
-                        bottomColor={new THREE.Color("darkgreen")}
-                        position={[-6, -2.0, -10]}
-                        options = {{ 
-                            baseWidth: 0.09,
-                            baseHeight: 1.4,
-                            joints: 5 
-                        }}
-                        groundWidth = {50}
-                        groundLength = {50}
-                        instances = {50_00}
-                    />
                     <Bg/>
                 </Suspense>
                 <ambientLight color="white" intensity={0.6}/>
@@ -59,24 +84,17 @@ export const Pyramind: React.FC<PyramindProps> = ({ onSectionChange }) => {
     );
 };
 
-function CameraPointerMove({ intensity = 0.08 }) {
-    const target = useRef(new THREE.Vector3())
-
+function CameraPointerMove({ intensity = 0.08 }) { 
+    const target = useRef(new THREE.Vector3());
     useFrame(({ camera, pointer }) => {
-        // Map pointer position (-1 to 1) to camera movement
-        target.current.x = pointer.x * intensity
-        target.current.y = pointer.y * intensity
-
-        // Smoothly interpolate camera position
+        target.current.x = pointer.x * intensity 
+        target.current.y = pointer.y * intensity 
         camera.position.x += (target.current.x - camera.position.x) * 0.05
-        camera.position.y += (target.current.y - camera.position.y) * 0.05
-
-        // Always look at the center
-        camera.lookAt(0, 0, 0)
-    })
-
-    return null
+        camera.position.y += (target.current.y - camera.position.y) * 0.05 
+        camera.lookAt(0, 0, 0) })
+    return null 
 }
+
 const Bg = () => {
     const texture = useTexture("/hills.webp");
     texture.colorSpace = THREE.SRGBColorSpace;
