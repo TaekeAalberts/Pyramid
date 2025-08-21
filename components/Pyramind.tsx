@@ -18,7 +18,8 @@ export interface PyramindProps {
 
 function ResponsiveElements() {
     const { camera, size } = useThree();
-    const isMobile = size.width < 768;
+    const isMobile = ("ontouchstart" in window || navigator.maxTouchPoints > 0) &&
+      /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 
     useEffect(() => {
         if (size.width < 768) {
