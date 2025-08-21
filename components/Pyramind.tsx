@@ -24,11 +24,11 @@ export const Pyramind: React.FC<PyramindProps> = ({ onSectionChange }) => {
             <Loader/>
                 <Canvas className="w-full h-full" camera={{ position: [0, 0.5, 10], fov: 75, zoom: 4 }}>
                 <Suspense fallback={null}>
-                    <Center position={[0, 0.2, 0]}>
+                    <Center position={[0, 0.0, 0]}>
                         <Model onSectionChange={onSectionChange} />
                     </Center>
                     {/* <Stats/> */}
-                    <Grass scale={0.1} position={[0, -1, -15]}/>
+                    <Grass scale={0.1} position={[0, -2, -15]}/>
                     <Bg/>
                 </Suspense>
                     <ambientLight color="white" intensity={0.6}/>
@@ -66,11 +66,16 @@ const Bg = () => {
     return (
         <>
             {/* <mesh position={[0, -0.3, -50]} scale={50.0}> */}
-            <mesh position={[0, 3.5, -50]} scale={50.0}>
+            <mesh position={[0, 2.2, -50]} scale={50.0}>
                 <planeGeometry/>
                 <meshBasicMaterial map={texture}/>
             </mesh>
-            <mesh position={[-5, -0.5, -6]} scale={0.9}>
+
+            <mesh position={[-5, -1.7, -14]} scale={[-1.3, 1.3, 1.3]}>
+                <planeGeometry/>
+                <meshBasicMaterial map={cow} transparent opacity={0.8} color="#cccccc"/>
+            </mesh>
+            <mesh position={[-6, -1.7, -10]} scale={1.2}>
                 <planeGeometry/>
                 <meshBasicMaterial map={cow} transparent opacity={0.8} color="#dddddd"/>
             </mesh>

@@ -36,6 +36,13 @@ export default function Home() {
             <div className="w-full h-full">
                 <Pyramind onSectionChange={setSection} />
             </div>
+            <div className="absolute top-10 left-10 flex z-50 font-bold text-xl/5 text-shadow-lg">
+                Farm<br/>
+                Manangement<br/>
+                Information<br/>
+                System<br/>
+            </div>
+            <div className="absolute top-10 right-10 text-4xl font-bold text-shadow-lg">Friedland Dairy</div>
 
             <AnimatePresence>
                 {section !== -1 && (
