@@ -57,7 +57,7 @@ function CameraPointerMove({ intensity = 0.08 }) {
   return null
 }
 const Bg = () => {
-    const texture = useTexture("/output.webp");
+    const texture = useTexture("/hills.webp");
     texture.colorSpace = THREE.SRGBColorSpace;
 
     const cow = useTexture("/cow.png");
@@ -65,8 +65,8 @@ const Bg = () => {
 
     return (
         <>
-            {/* <mesh position={[0, -0.3, -50]} scale={50.0}> */}
-            <mesh position={[0, 2.4, -50]} scale={50.0}>
+            <mesh position={[0, -0.3, -50]} scale={50.0}>
+            {/* <mesh position={[0, 2.4, -50]} scale={50.0}> */}
                 <planeGeometry/>
                 <meshBasicMaterial map={texture}/>
             </mesh>
