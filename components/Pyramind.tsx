@@ -2,17 +2,15 @@
 
 import {
     Center,
-    Grid,
     useGLTF,
     useTexture,
-    Stats,
-    OrbitControls,
-    Environment
+    // Stats,
+    Loader
 } from "@react-three/drei";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, Suspense } from "react";
 import * as THREE from "three";
-import { EffectComposer, Bloom, DepthOfField } from "@react-three/postprocessing";
+// import { EffectComposer, Bloom, DepthOfField } from "@react-three/postprocessing";
 import Grass from "./Grass";
 
 export interface PyramindProps {
@@ -22,34 +20,62 @@ export interface PyramindProps {
 export const Pyramind: React.FC<PyramindProps> = ({ onSectionChange }) => {
 
     return (
-        <Canvas className="w-full h-full" camera={{ position: [0, 0.5, 10], fov: 75, zoom: 4 }}>
-            {/* <fog args={["black", 10, 15]} attach="fog"/> */}
-            <Center position={[0, 0.0, 0]}>
-                <Model onSectionChange={onSectionChange} />
-            </Center>
-            <Stats/>
-            <Grass scale={0.1} position={[0, -1, -10]}/>
-            <Bg/>
-            <OrbitControls/>
-            <ambientLight color="white" intensity={0.3}/>
-            {/* <Environment preset="night"/> */}
-            <EffectComposer>
-                <Bloom luminanceThreshold={0.1} luminanceSmoothing={0.9} intensity={0.8} />
-                <DepthOfField
-                    //focusDistance={0.05} // Distance to the focal plane
-                    //focalLength={0.2} // Focal length of the lens
-                    bokehScale={4} // Amount of blur applied
-                    height={480} // Render height for the effect
-                />
-                {/* <Vignette eskil={false} offset={0.01} darkness={1.0} /> */}
-            </EffectComposer>
-        </Canvas>
+        <>
+            <Loader/>
+                <Canvas className="w-full h-full" camera={{ position: [0, 0.5, 10], fov: 75, zoom: 4 }}>
+                <Suspense fallback={null}>
+                    <Center position={[0, 0.2, 0]}>
+                        <Model onSectionChange={onSectionChange} />
+                    </Center>
+                    {/* <Stats/> */}
+                    <Grass scale={0.1} position={[0, -1, -15]}/>
+                    <Bg/>
+                </Suspense>
+                    <ambientLight color="white" intensity={0.6}/>
+                    <CameraPointerMove intensity={0.1}/>
+                </Canvas>
+        </>
     );
 };
+
+function CameraPointerMove({ intensity = 0.08 }) {
+  const target = useRef(new THREE.Vector3())
+
+  useFrame(({ camera, pointer }) => {
+    // Map pointer position (-1 to 1) to camera movement
+    target.current.x = pointer.x * intensity
+    target.current.y = pointer.y * intensity
+
+    // Smoothly interpolate camera position
+    camera.position.x += (target.current.x - camera.position.x) * 0.05
+    camera.position.y += (target.current.y - camera.position.y) * 0.05
+
+    // Always look at the center
+    camera.lookAt(0, 0, 0)
+  })
+
+  return null
+}
 const Bg = () => {
-    const texture = useTexture("/sky.jpg");
+    const texture = useTexture("/output.webp");
     texture.colorSpace = THREE.SRGBColorSpace;
-    return <primitive attach="background" object={texture} />
+
+    const cow = useTexture("/cow.png");
+    cow.colorSpace = THREE.SRGBColorSpace;
+
+    return (
+        <>
+            {/* <mesh position={[0, -0.3, -50]} scale={50.0}> */}
+            <mesh position={[0, 3.5, -50]} scale={50.0}>
+                <planeGeometry/>
+                <meshBasicMaterial map={texture}/>
+            </mesh>
+            <mesh position={[-5, -0.5, -6]} scale={0.9}>
+                <planeGeometry/>
+                <meshBasicMaterial map={cow} transparent opacity={0.8} color="#dddddd"/>
+            </mesh>
+        </>
+    );
 }
 
 const vertexShader = `
@@ -58,12 +84,12 @@ varying vec3 vViewDir;
 varying vec3 vPosition;
 
 void main() {
-vNormal = normalMatrix * normal;
-vec4 viewPos = modelViewMatrix * vec4(position, 1.0);
-vViewDir = normalize(-viewPos.xyz);
-vPosition = position;
+    vNormal = normalMatrix * normal;
+    vec4 viewPos = modelViewMatrix * vec4(position, 1.0);
+    vViewDir = normalize(-viewPos.xyz);
+    vPosition = position;
 
-gl_Position = projectionMatrix * viewPos;
+    gl_Position = projectionMatrix * viewPos;
 }
 `;
 
@@ -76,25 +102,25 @@ varying vec3 vNormal;
 varying vec3 vViewDir;
 
 void main() {
-vec3 blue = vec3(0.0, 0.0, 1.0);
-vec3 lightBlue = vec3(0.0, 0.1, 0.8);
+    vec3 blue = vec3(0.0, 0.0, 1.0);
+    vec3 lightBlue = vec3(0.0, 0.1, 0.8);
 
-float fresnel = pow(1.0 - dot(normalize(vNormal), normalize(vViewDir)), 2.0);
-float anim = sin(uTime * 2.0 + vPosition.y * 5.0) * 0.5 + 0.5;
+    float fresnel = pow(1.0 - dot(normalize(vNormal), normalize(vViewDir)), 2.0);
+    float anim = sin(uTime * 2.0 + vPosition.y * 5.0) * 0.5 + 0.5;
 
-float upFacing = dot(normalize(vNormal), vec3(0.0, 1.0, 0.0));
-if (uIsHover) {
-vec3 glow = mix(lightBlue, vec3(0.2, 0.8, 1.0), fresnel * anim);
-if (upFacing > 0.7) {
-gl_FragColor = vec4(vec3(1.0, 1.0, 1.0), 1.0);
-} else {
-gl_FragColor = vec4(glow, 1.0);
-}
-} else {
-if (upFacing > 0.7) discard;
-vec3 glow = mix(blue, vec3(0.2, 0.8, 1.0), fresnel * anim);
-gl_FragColor = vec4(glow, 0.4);
-}
+    float upFacing = dot(normalize(vNormal), vec3(0.0, 1.0, 0.0));
+    if (uIsHover) {
+        vec3 glow = mix(lightBlue, vec3(0.2, 0.8, 1.0), fresnel * anim);
+    if (upFacing > 0.7) {
+        gl_FragColor = vec4(vec3(1.0, 1.0, 1.0), 1.0);
+    } else {
+        gl_FragColor = vec4(glow, 1.0);
+    }
+    } else {
+        if (upFacing > 0.7) discard;
+        vec3 glow = mix(blue, vec3(0.2, 0.8, 1.0), fresnel * anim);
+        gl_FragColor = vec4(glow, 0.4);
+    }
 }
 `;
 
