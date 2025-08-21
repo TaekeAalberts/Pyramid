@@ -19,6 +19,9 @@ export default function Grass({
     groundWidth = 500,
     groundLength = 500,
     instances = 2000_00,
+    inRows = true,
+    tipColor = new THREE.Color(0.5, 0.6, 0.0).convertSRGBToLinear(),
+    bottomColor = new THREE.Color(0.0, 0.1, 0.0).convertSRGBToLinear(),
     ...props
 }) {
     const { baseWidth, baseHeight, joints } = options;
@@ -30,7 +33,7 @@ export default function Grass({
     ])
 
     const attributeData = useMemo(() =>
-        getAttributeData(instances, groundWidth),
+        getAttributeData(instances, groundWidth, inRows),
         [instances, groundWidth]);
 
     const baseGeom = useMemo(() =>
@@ -103,6 +106,8 @@ export default function Grass({
                     map={texture}
                     alphaMap={alphaMap}
                     toneMapped={false}
+                    tipColor={tipColor}
+                    bottomColor={bottomColor}
                 />
             </mesh>
 
@@ -116,7 +121,7 @@ export default function Grass({
     )
 }
 
-function getAttributeData(instances, width) {
+function getAttributeData(instances, width, inRows=true) {
     const offsets = [];
     const orientations = [];
     const stretches = [];
@@ -130,8 +135,13 @@ function getAttributeData(instances, width) {
     const max = 0.25;
 
     for (let i = 0; i < instances; i++) {
-        // const offsetX = Math.random() * width - width / 2;
-        const offsetX = (i * 2.0) % width - width/2 - (i%2 ? 1.5 : 0);
+
+        let offsetX;
+        if (inRows) {
+            offsetX = (i * 2.0) % width - width/2 - (i%2 ? 1.5 : 0);
+        } else {
+            offsetX = Math.random() * width - width / 2;
+        }
         const offsetZ = Math.random() * width - width / 2;
         const offsetY = getYPosition(offsetX, offsetZ);
         offsets.push(offsetX, offsetY, offsetZ);

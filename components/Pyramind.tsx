@@ -4,13 +4,12 @@ import {
     Center,
     useGLTF,
     useTexture,
-    // Stats,
-    Loader
+    Loader,
+    PerspectiveCamera
 } from "@react-three/drei";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { useRef, useState, useEffect, Suspense } from "react";
 import * as THREE from "three";
-// import { EffectComposer, Bloom, DepthOfField } from "@react-three/postprocessing";
 import Grass from "./Grass";
 
 export interface PyramindProps {
@@ -22,39 +21,61 @@ export const Pyramind: React.FC<PyramindProps> = ({ onSectionChange }) => {
     return (
         <>
             <Loader/>
-                <Canvas className="w-full h-full" camera={{ position: [0, 0.5, 10], fov: 75, zoom: 4 }}>
+            <Canvas className="w-full h-full" /*camera={{ position: [0, 0.5, 10], fov: 75, zoom: 4 }}*/>
                 <Suspense fallback={null}>
+                    <PerspectiveCamera
+                        makeDefault
+                        fov={75} // vertical field of view
+                        position={[0, 0.5, 10]}
+                        zoom={4}
+                    />
                     <Center position={[0, 0.0, 0]}>
                         <Model onSectionChange={onSectionChange} />
                     </Center>
                     {/* <Stats/> */}
                     <Grass scale={0.1} position={[0, -2, -24]}/>
+                    <Grass
+                        rotation={[4*Math.PI/180, 0, 0]}
+                        scale={0.2} 
+                        inRows={false}
+                        tipColor={new THREE.Color("darkgreen")}
+                        bottomColor={new THREE.Color("darkgreen")}
+                        position={[-6, -2.0, -10]}
+                        options = {{ 
+                            baseWidth: 0.09,
+                            baseHeight: 1.4,
+                            joints: 5 
+                        }}
+                        groundWidth = {50}
+                        groundLength = {50}
+                        instances = {50_00}
+                    />
                     <Bg/>
                 </Suspense>
-                    <ambientLight color="white" intensity={0.6}/>
-                    <CameraPointerMove intensity={0.1}/>
-                </Canvas>
+                <ambientLight color="white" intensity={0.6}/>
+                <CameraPointerMove intensity={0.1}/>
+            </Canvas>
         </>
     );
 };
 
 function CameraPointerMove({ intensity = 0.08 }) {
-  const target = useRef(new THREE.Vector3())
+    const target = useRef(new THREE.Vector3())
 
-  useFrame(({ camera, pointer }) => {
-    // Map pointer position (-1 to 1) to camera movement
-    target.current.x = pointer.x * intensity
-    target.current.y = pointer.y * intensity
+    useFrame(({ camera, pointer }) => {
+        // Map pointer position (-1 to 1) to camera movement
+        target.current.x = pointer.x * intensity
+        target.current.y = pointer.y * intensity
 
-    // Smoothly interpolate camera position
-    camera.position.x += (target.current.x - camera.position.x) * 0.05
-    camera.position.y += (target.current.y - camera.position.y) * 0.05
+        // Smoothly interpolate camera position
+        camera.position.x += (target.current.x - camera.position.x) * 0.05
+        camera.position.y += (target.current.y - camera.position.y) * 0.05
 
-    // Always look at the center
-    camera.lookAt(0, 0, 0)
-  })
+        // Always look at the center
+        camera.lookAt(0, 0, 0)
+    })
 
-  return null
+    return null
 }
 const Bg = () => {
     const texture = useTexture("/hills.webp");
@@ -66,16 +87,16 @@ const Bg = () => {
     return (
         <>
             <mesh position={[0, -0.3, -50]} scale={50.0}>
-            {/* <mesh position={[0, 2.4, -50]} scale={50.0}> */}
+                {/* <mesh position={[0, 2.4, -50]} scale={50.0}> */}
                 <planeGeometry/>
                 <meshBasicMaterial map={texture}/>
             </mesh>
 
-            <mesh position={[-5, -1.7, -14]} scale={[-1.3, 1.3, 1.3]}>
+            <mesh position={[-5, -1.2, -14]} scale={[-1.3, 1.3, 1.3]}>
                 <planeGeometry/>
                 <meshBasicMaterial map={cow} transparent opacity={0.8} color="#cccccc"/>
             </mesh>
-            <mesh position={[-6, -1.7, -10]} scale={1.2}>
+            <mesh position={[-6, -1.5, -10]} scale={1.2}>
                 <planeGeometry/>
                 <meshBasicMaterial map={cow} transparent opacity={0.8} color="#dddddd"/>
             </mesh>
@@ -89,12 +110,12 @@ varying vec3 vViewDir;
 varying vec3 vPosition;
 
 void main() {
-    vNormal = normalMatrix * normal;
-    vec4 viewPos = modelViewMatrix * vec4(position, 1.0);
-    vViewDir = normalize(-viewPos.xyz);
-    vPosition = position;
+vNormal = normalMatrix * normal;
+vec4 viewPos = modelViewMatrix * vec4(position, 1.0);
+vViewDir = normalize(-viewPos.xyz);
+vPosition = position;
 
-    gl_Position = projectionMatrix * viewPos;
+gl_Position = projectionMatrix * viewPos;
 }
 `;
 
@@ -107,25 +128,25 @@ varying vec3 vNormal;
 varying vec3 vViewDir;
 
 void main() {
-    vec3 blue = vec3(0.0, 0.0, 1.0);
-    vec3 lightBlue = vec3(0.0, 0.1, 0.8);
+vec3 blue = vec3(0.,0.169,0.357);
+vec3 lightBlue = vec3(0.,0.169,0.357);;
 
-    float fresnel = pow(1.0 - dot(normalize(vNormal), normalize(vViewDir)), 2.0);
-    float anim = sin(uTime * 2.0 + vPosition.y * 5.0) * 0.5 + 0.5;
+float fresnel = pow(1.0 - dot(normalize(vNormal), normalize(vViewDir)), 2.0);
+float anim = sin(uTime * 2.0 + vPosition.y * 5.0) * 0.5 + 0.5;
 
-    float upFacing = dot(normalize(vNormal), vec3(0.0, 1.0, 0.0));
-    if (uIsHover) {
-        vec3 glow = mix(lightBlue, vec3(0.2, 0.8, 1.0), fresnel * anim);
-    if (upFacing > 0.7) {
-        gl_FragColor = vec4(vec3(1.0, 1.0, 1.0), 1.0);
-    } else {
-        gl_FragColor = vec4(glow, 1.0);
-    }
-    } else {
-        if (upFacing > 0.7) discard;
-        vec3 glow = mix(blue, vec3(0.2, 0.8, 1.0), fresnel * anim);
-        gl_FragColor = vec4(glow, 0.4);
-    }
+float upFacing = dot(normalize(vNormal), vec3(0.0, 1.0, 0.0));
+if (uIsHover) {
+vec3 glow = mix(lightBlue, vec3(0.2, 0.8, 1.0), fresnel * anim);
+if (upFacing > 0.7) {
+gl_FragColor = vec4(vec3(1.0, 1.0, 1.0), 1.0);
+} else {
+gl_FragColor = vec4(glow, 1.0);
+}
+} else {
+if (upFacing > 0.7) discard;
+vec3 glow = mix(blue, vec3(0.2, 0.8, 1.0), fresnel * anim);
+gl_FragColor = vec4(glow, 0.4);
+}
 }
 `;
 
