@@ -16,8 +16,7 @@ export interface PyramindProps {
     onSectionChange?: (index: number) => void;
 }
 
-
-function ResponsiveCamera() {
+function ResponsiveElements() {
     const { camera, size } = useThree();
     const isMobile = size.width < 768;
 
@@ -32,11 +31,12 @@ function ResponsiveCamera() {
 
     return (
         <>
-            {!isMobile  &&
+        {!isMobile ? (
+            <>
                 <Grass
+                    rotation={[0, 0*Math.PI/180, 0]}
                     scale={0.1} position={[0, -2, -24]}/>
-            }
-            {!isMobile  &&
+                <Background/>
                 <Grass
                     rotation={[4*Math.PI/180, 0, 0]}
                     scale={0.2} 
@@ -52,10 +52,27 @@ function ResponsiveCamera() {
                     groundWidth = {50}
                     groundLength = {50}
                     instances = {50_00}
-                />}
+                />
+            </>
+        ) :
+            <ImageBg/>
+        }
         </>
     );
 }
+
+// Show a static background image on mobile devices where the resources are limited
+const ImageBg = () => {
+    const backgroundTexture = useTexture("/high-angle-farmland-view.jpg");
+    backgroundTexture.colorSpace = THREE.SRGBColorSpace;
+
+    return (
+        <mesh scale={[20, (9/16)*20, 1]} position={[0, 0, -10]}>
+            <planeGeometry args={[1, 1]} />
+            <meshBasicMaterial map={backgroundTexture} />
+        </mesh>
+    );
+};
 
 export const Pyramind: React.FC<PyramindProps> = ({ onSectionChange }) => {
 
@@ -70,12 +87,11 @@ export const Pyramind: React.FC<PyramindProps> = ({ onSectionChange }) => {
                         position={[0, 0.5, 10]}
                         zoom={4}
                     />
-                    <ResponsiveCamera/>
+                    <ResponsiveElements/>
                     <Center position={[0, 0.0, 0]}>
                         <Model onSectionChange={onSectionChange} />
                     </Center>
                     {/* <Stats/> */}
-                    <Bg/>
                 </Suspense>
                 <ambientLight color="white" intensity={0.6}/>
                 <CameraPointerMove intensity={0.1}/>
@@ -95,7 +111,7 @@ function CameraPointerMove({ intensity = 0.08 }) {
     return null 
 }
 
-const Bg = () => {
+const Background = () => {
     const texture = useTexture("/hills.webp");
     texture.colorSpace = THREE.SRGBColorSpace;
 
@@ -104,17 +120,16 @@ const Bg = () => {
 
     return (
         <>
-            <mesh position={[0, -0.3, -50]} scale={50.0}>
-                {/* <mesh position={[0, 2.4, -50]} scale={50.0}> */}
+            <mesh position={[0, 4.0, -50]} scale={[50.0,9/16*50.0,1.0]}>
                 <planeGeometry/>
                 <meshBasicMaterial map={texture}/>
             </mesh>
 
-            <mesh position={[-5, -1.2, -14]} scale={[-1.3, 1.3, 1.3]}>
+            <mesh position={[-5, -1.2, -20]} scale={[-1.3, 1.3, 1.3]}>
                 <planeGeometry/>
                 <meshBasicMaterial map={cow} transparent opacity={0.8} color="#cccccc"/>
             </mesh>
-            <mesh position={[-6, -1.5, -10]} scale={1.2}>
+            <mesh position={[-6, -1.3, -15]} scale={1.2}>
                 <planeGeometry/>
                 <meshBasicMaterial map={cow} transparent opacity={0.8} color="#dddddd"/>
             </mesh>

@@ -8,8 +8,8 @@ const GrassMaterial = shaderMaterial(
     map: null,
     alphaMap: null,
     time: 0,
-    tipColor: new THREE.Color(0.5, 0.6, 0.0).convertSRGBToLinear(),
-    bottomColor: new THREE.Color(0.0, 0.1, 0.0).convertSRGBToLinear(),
+    tipColor: new THREE.Color(1.0, 0.0, 0.0).convertSRGBToLinear(),
+    bottomColor: new THREE.Color(1.0, 0.1, 0.0).convertSRGBToLinear(),
   },
   `   precision mediump float;
       attribute vec3 offset;

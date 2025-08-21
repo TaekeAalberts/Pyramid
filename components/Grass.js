@@ -13,7 +13,7 @@ const noise = new ImprovedNoise();
 export default function Grass({
     options = { 
         baseWidth: 0.08,
-        baseHeight: 2.0,
+        baseHeight: 2.5,
         joints: 5 
     },
     groundWidth = 500,
