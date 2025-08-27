@@ -27,47 +27,30 @@ export interface PyramindProps {
 }
 
 function ResponsiveElements() {
-    const { camera, size } = useThree();
-    // const isMobile = ("ontouchstart" in window || navigator.maxTouchPoints > 0) &&
-      // /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+  const { camera, size } = useThree();
 
-    useEffect(() => {
-        if (size.width < 768) {
-            camera.position.z = 18;
-        } else {
-            camera.position.z = 10;
-        }
-        camera.updateProjectionMatrix();
-    }, [size, camera]);
+  useEffect(() => {
+    const aspect = size.width / size.height;
 
-    // const grass = useMemo(() => (
-    //     <>
-    //         {/* <Grass */}
-    //         {/*     rotation={[0, 0*Math.PI/180, 0]} */}
-    //         {/*     scale={0.1} position={[10, -2, -38]} */}
-    //         {/*     instances={100_000} */}
-    //         {/*     groundWidth={300} groundLength={800} */}
-    //         {/* /> */}
-    //         {/* <Grass */}
-    //         {/*     rotation={[0, 0*Math.PI/180, 0]} */}
-    //         {/*     scale={0.1} position={[-16, -2.0, -38]} */}
-    //         {/*     inRows={false} */}
-    //         {/*     tipColor={new THREE.Color("darkgreen")} */}
-    //         {/*     bottomColor={new THREE.Color("darkgreen")} */}
-    //         {/*     options = {{  */}
-    //         {/*         baseWidth: 0.10, */}
-    //         {/*         baseHeight: 1.2, */}
-    //         {/*         joints: 5  */}
-    //         {/*     }} */}
-    //         {/*     groundWidth={250} */}
-    //         {/*     groundLength={800} */}
-    //         {/*     instances={100_000} */}
-    //         {/* /> */}
-    //     </>
-    //
-    // ), []);
+    // Adjust FOV dynamically for ultrawide
+    if (aspect > 3) { // ultrawide (e.g. 32:9)
+            //@ts-ignore
+      camera.fov = 40; // widen FOV
+      camera.position.z = 12;
+    } else if (size.width < 768) {
+            //@ts-ignore
+      camera.fov = 50;
+      camera.position.z = 18;
+    } else {
+            //@ts-ignore
+      camera.fov = 45;
+      camera.position.z = 10;
+    }
 
-    return ( <Background/>);
+    camera.updateProjectionMatrix();
+  }, [size, camera]);
+
+  return <Background/>;
 }
 
 // Show a static background image on mobile devices where the resources are limited
