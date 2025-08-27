@@ -5,12 +5,22 @@ import {
     useGLTF,
     useTexture,
     Loader,
-    PerspectiveCamera
+    PerspectiveCamera,
+    // OrbitControls,
+    // Clouds, Cloud,
+    // Stats
 } from "@react-three/drei";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { useRef, useState, useEffect, Suspense } from "react";
+import { 
+    useRef,
+    useState,
+    useEffect,
+    // useMemo,
+    Suspense
+} from "react";
 import * as THREE from "three";
-import Grass from "./Grass";
+// import Grass from "./Grass";
+import { Clouds, /*Hills*/ } from "./Clouds";
 
 export interface PyramindProps {
     onSectionChange?: (index: number) => void;
@@ -18,8 +28,8 @@ export interface PyramindProps {
 
 function ResponsiveElements() {
     const { camera, size } = useThree();
-    const isMobile = ("ontouchstart" in window || navigator.maxTouchPoints > 0) &&
-      /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    // const isMobile = ("ontouchstart" in window || navigator.maxTouchPoints > 0) &&
+      // /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 
     useEffect(() => {
         if (size.width < 768) {
@@ -30,61 +40,128 @@ function ResponsiveElements() {
         camera.updateProjectionMatrix();
     }, [size, camera]);
 
-    return (
-        <>
-        {!isMobile ? (
-            <>
-                <Grass
-                    rotation={[0, 0*Math.PI/180, 0]}
-                    scale={0.1} position={[0, -2, -24]}/>
-                <Background/>
-                <Grass
-                    rotation={[4*Math.PI/180, 0, 0]}
-                    scale={0.2} 
-                    inRows={false}
-                    tipColor={new THREE.Color("darkgreen")}
-                    bottomColor={new THREE.Color("darkgreen")}
-                    position={[-6, -2.0, -10]}
-                    options = {{ 
-                        baseWidth: 0.09,
-                        baseHeight: 1.4,
-                        joints: 5 
-                    }}
-                    groundWidth = {50}
-                    groundLength = {50}
-                    instances = {50_00}
-                />
-            </>
-        ) :
-            <ImageBg/>
-        }
-        </>
-    );
+    // const grass = useMemo(() => (
+    //     <>
+    //         {/* <Grass */}
+    //         {/*     rotation={[0, 0*Math.PI/180, 0]} */}
+    //         {/*     scale={0.1} position={[10, -2, -38]} */}
+    //         {/*     instances={100_000} */}
+    //         {/*     groundWidth={300} groundLength={800} */}
+    //         {/* /> */}
+    //         {/* <Grass */}
+    //         {/*     rotation={[0, 0*Math.PI/180, 0]} */}
+    //         {/*     scale={0.1} position={[-16, -2.0, -38]} */}
+    //         {/*     inRows={false} */}
+    //         {/*     tipColor={new THREE.Color("darkgreen")} */}
+    //         {/*     bottomColor={new THREE.Color("darkgreen")} */}
+    //         {/*     options = {{  */}
+    //         {/*         baseWidth: 0.10, */}
+    //         {/*         baseHeight: 1.2, */}
+    //         {/*         joints: 5  */}
+    //         {/*     }} */}
+    //         {/*     groundWidth={250} */}
+    //         {/*     groundLength={800} */}
+    //         {/*     instances={100_000} */}
+    //         {/* /> */}
+    //     </>
+    //
+    // ), []);
+
+    return ( <Background/>);
 }
 
 // Show a static background image on mobile devices where the resources are limited
-const ImageBg = () => {
-    const backgroundTexture = useTexture("/high-angle-farmland-view.jpg");
-    backgroundTexture.colorSpace = THREE.SRGBColorSpace;
+// const ImageBg = () => {
+//     const backgroundTexture = useTexture("/high-angle-farmland-view.jpg");
+//     backgroundTexture.colorSpace = THREE.SRGBColorSpace;
+//
+//     return (
+//         <mesh scale={[20, (9/16)*20, 1]} position={[0, 0, -10]}>
+//             <planeGeometry args={[1, 1]} />
+//             <meshBasicMaterial map={backgroundTexture} />
+//         </mesh>
+//     );
+// };
 
-    return (
-        <mesh scale={[20, (9/16)*20, 1]} position={[0, 0, -10]}>
-            <planeGeometry args={[1, 1]} />
-            <meshBasicMaterial map={backgroundTexture} />
-        </mesh>
-    );
-};
+// function CloudBackground() {
+//   const cloudRefs = [useRef<THREE.Group>(null), useRef<THREE.Group>(null), useRef<THREE.Group>(null), useRef<THREE.Group>(null)];
+//
+//   useFrame(({ clock }, delta) => {
+//     const t = clock.getElapsedTime();
+//     const baseSpeeds = [0.1, 0.15, 0.2, 0.25]; // very slow "wind"
+//     const bounds = 5;
+//
+//     cloudRefs.forEach((ref, i) => {
+//       if (ref.current) {
+//         // base horizontal drift (wind)
+//         ref.current.position.x += delta * baseSpeeds[i] * 2.0;
+//
+//         // wrap horizontally
+//         if (ref.current.position.x > bounds) {
+//           ref.current.position.x = -bounds;
+//         }
+//
+//         // gentle vertical oscillation (different phases per cloud)
+//         ref.current.position.y += Math.sin(t * 0.1 + i) * 0.002;
+//
+//         // slight forward/back jiggle
+//         ref.current.position.z += Math.sin(t * 0.07 + i * 2.0) * 0.001;
+//
+//         // optional: slow breathing (scale change)
+//         const s = 1 + Math.sin(t * 0.05 + i) * 0.02;
+//         ref.current.scale.setScalar(s);
+//       }
+//     });
+//   });
+//
+//   const cloudElements = useMemo(() => {
+//     return [
+//       <Clouds key="c1" material={THREE.MeshBasicMaterial}>
+//         <Cloud seed={1} segments={40} speed={0.2} bounds={[1, 1, 1]} volume={1.5} color="white" opacity={0.85} fade={40} growth={2.5} />
+//       </Clouds>,
+//       <Clouds key="c2" material={THREE.MeshBasicMaterial}>
+//         <Cloud seed={2} segments={40} speed={0.2} bounds={[2, 1.5, 1]} volume={2} color="white" opacity={0.8} fade={50} growth={3} />
+//       </Clouds>,
+//       <Clouds key="c3" material={THREE.MeshBasicMaterial}>
+//         <Cloud seed={3} segments={40} speed={0.2} bounds={[3, 2, 1]} volume={2.5} color="white" opacity={0.75} fade={60} growth={3} />
+//       </Clouds>,
+//       <Clouds key="c4" material={THREE.MeshBasicMaterial}>
+//         <Cloud seed={4} segments={40} speed={0.2} bounds={[4, 2.5, 1]} volume={3} color="white" opacity={0.7} fade={70} growth={3.5} />
+//       </Clouds>,
+//     ];
+//   }, []);
+//
+//   return (
+//     <group>
+//       <group ref={cloudRefs[0]} position={[-10, 3, -20]}>
+//         {cloudElements[0]}
+//       </group>
+//       <group ref={cloudRefs[1]} position={[-15, 4, -25]}>
+//         {cloudElements[1]}
+//       </group>
+//       <group ref={cloudRefs[2]} position={[-30, 5, -35]}>
+//         {cloudElements[2]}
+//       </group>
+//       <group ref={cloudRefs[3]} position={[-25, 6, -35]}>
+//         {cloudElements[3]}
+//       </group>
+//     </group>
+//   );
+// }
+//
 
 export const Pyramind: React.FC<PyramindProps> = ({ onSectionChange }) => {
-
     return (
         <>
             <Loader/>
-            <Canvas className="w-full h-full" /*camera={{ position: [0, 0.5, 10], fov: 75, zoom: 4 }}*/>
+            <Canvas className="w-full h-full bg-gradient-to-b from-blue-400 to-blue-100" >
+                {/* <OrbitControls/> */}
+                {/* <Hills/> */}
                 <Suspense fallback={null}>
+                    <Clouds/>
                     <PerspectiveCamera
                         makeDefault
-                        fov={75} // vertical field of view
+                        fov={75}
                         position={[0, 0.5, 10]}
                         zoom={4}
                     />
@@ -94,12 +171,30 @@ export const Pyramind: React.FC<PyramindProps> = ({ onSectionChange }) => {
                     </Center>
                     {/* <Stats/> */}
                 </Suspense>
+                {/* <Fence/> */}
                 <ambientLight color="white" intensity={0.6}/>
                 <CameraPointerMove intensity={0.1}/>
             </Canvas>
         </>
     );
 };
+
+// function Fence() {
+//     const tex = useTexture("/fence.png");
+//     tex.colorSpace = THREE.SRGBColorSpace;
+//     tex.wrapS = THREE.RepeatWrapping;
+//     tex.wrapT = THREE.RepeatWrapping;
+//     tex.repeat.set(40, 1);
+//     return (
+//         <mesh 
+//             rotation={[0, Math.PI/2, 0]}
+//             position={[-3.6, -1.5, -40]}
+//         >
+//             <planeGeometry args={[100, 1.0, 1, 1]}/>
+//             <meshStandardMaterial color="white" map={tex} transparent />
+//         </mesh>
+//     )
+// }
 
 function CameraPointerMove({ intensity = 0.08 }) { 
     const target = useRef(new THREE.Vector3());
@@ -113,27 +208,43 @@ function CameraPointerMove({ intensity = 0.08 }) {
 }
 
 const Background = () => {
-    const texture = useTexture("/hills.webp");
+    const texture = useTexture("/grass.webp");
     texture.colorSpace = THREE.SRGBColorSpace;
 
-    const cow = useTexture("/cow.png");
-    cow.colorSpace = THREE.SRGBColorSpace;
+    // const cow = useTexture("/cow.png");
+    // cow.colorSpace = THREE.SRGBColorSpace;
+    //
+    // const tree = useTexture("/tree-1.png");
+    // tree.colorSpace = THREE.SRGBColorSpace;
+    //
+    // const tree2 = useTexture("/tree-2.png");
+    // tree2.colorSpace = THREE.SRGBColorSpace;
 
     return (
         <>
-            <mesh position={[0, 4.0, -50]} scale={[50.0,9/16*50.0,1.0]}>
+            <mesh position={[0, 0.0, -50]} scale={[50.0,9/16*50.0,1.0]}>
                 <planeGeometry/>
-                <meshBasicMaterial map={texture}/>
+                <meshBasicMaterial map={texture} transparent/>
             </mesh>
 
-            <mesh position={[-5, -1.2, -20]} scale={[-1.3, 1.3, 1.3]}>
-                <planeGeometry/>
-                <meshBasicMaterial map={cow} transparent opacity={0.8} color="#cccccc"/>
-            </mesh>
-            <mesh position={[-6, -1.3, -15]} scale={1.2}>
-                <planeGeometry/>
-                <meshBasicMaterial map={cow} transparent opacity={0.8} color="#dddddd"/>
-            </mesh>
+            {/* <mesh position={[-5, -1.2, -20]} scale={[-1.3, 1.3, 1.3]}> */}
+            {/*     <planeGeometry/> */}
+            {/*     <meshBasicMaterial map={cow} transparent opacity={0.8} color="#cccccc"/> */}
+            {/* </mesh> */}
+            {/* <mesh position={[-6, -1.3, -15]} scale={1.2}> */}
+            {/*     <planeGeometry/> */}
+            {/*     <meshBasicMaterial map={cow} transparent opacity={0.8} color="#dddddd"/> */}
+            {/* </mesh> */}
+            {/**/}
+            {/* <mesh position={[-11, -0.2, -20]} scale={[2.5, 2.5, 1]}> */}
+            {/*     <planeGeometry/> */}
+            {/*     <meshBasicMaterial map={tree} transparent opacity={1.0} color="white"/> */}
+            {/* </mesh> */}
+            {/**/}
+            {/* <mesh position={[-13, -0.2, -30]} scale={[-2.5, 2.5, 1]}> */}
+            {/*     <planeGeometry/> */}
+            {/*     <meshBasicMaterial map={tree} transparent opacity={1.0} color="white"/> */}
+            {/* </mesh> */}
         </>
     );
 }
@@ -144,12 +255,12 @@ varying vec3 vViewDir;
 varying vec3 vPosition;
 
 void main() {
-vNormal = normalMatrix * normal;
-vec4 viewPos = modelViewMatrix * vec4(position, 1.0);
-vViewDir = normalize(-viewPos.xyz);
-vPosition = position;
+    vNormal = normalMatrix * normal;
+    vec4 viewPos = modelViewMatrix * vec4(position, 1.0);
+    vViewDir = normalize(-viewPos.xyz);
+    vPosition = position;
 
-gl_Position = projectionMatrix * viewPos;
+    gl_Position = projectionMatrix * viewPos;
 }
 `;
 
@@ -162,25 +273,25 @@ varying vec3 vNormal;
 varying vec3 vViewDir;
 
 void main() {
-vec3 blue = vec3(0.,0.169,0.357);
-vec3 lightBlue = vec3(0.,0.169,0.357);;
+    vec3 lightBlue = vec3(0.0,0.169,0.357);
 
-float fresnel = pow(1.0 - dot(normalize(vNormal), normalize(vViewDir)), 2.0);
-float anim = sin(uTime * 2.0 + vPosition.y * 5.0) * 0.5 + 0.5;
+    float fresnel = pow(1.0 - dot(normalize(vNormal), normalize(vViewDir)), 2.0);
+    float anim = sin(uTime * 2.0 + vPosition.y * 5.0) * 0.5 + 0.5;
 
-float upFacing = dot(normalize(vNormal), vec3(0.0, 1.0, 0.0));
-if (uIsHover) {
-vec3 glow = mix(lightBlue, vec3(0.2, 0.8, 1.0), fresnel * anim);
-if (upFacing > 0.7) {
-gl_FragColor = vec4(vec3(1.0, 1.0, 1.0), 1.0);
-} else {
-gl_FragColor = vec4(glow, 1.0);
-}
-} else {
-if (upFacing > 0.7) discard;
-vec3 glow = mix(blue, vec3(0.2, 0.8, 1.0), fresnel * anim);
-gl_FragColor = vec4(glow, 0.4);
-}
+    float upFacing = dot(vNormal, vec3(0.0, 1.0, 0.0));
+    float downFacing = dot(-vNormal, vec3(0.0, 1.0, 0.0)); 
+    if (uIsHover) {
+        if (upFacing > 0.7 || downFacing > 0.7) {
+            gl_FragColor = vec4(1.0);
+        } else {
+            vec3 glow = mix(lightBlue, vec3(0.2, 0.8, 1.0), fresnel * anim);
+            gl_FragColor = vec4(glow, 1.0);
+        }
+    } else {
+        if (upFacing > 0.7) discard;
+        vec3 glow = mix(lightBlue, vec3(0.2, 0.8, 1.0), fresnel * anim);
+        gl_FragColor = vec4(glow, 0.4);
+    }
 }
 `;
 

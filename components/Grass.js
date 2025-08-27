@@ -32,9 +32,9 @@ export default function Grass({
         '/textures/blade_alpha.jpg'
     ])
 
-    const attributeData = useMemo(() =>
-        getAttributeData(instances, groundWidth, inRows),
-        [instances, groundWidth]);
+const attributeData = useMemo(() =>
+    getAttributeData(instances, groundWidth, groundLength, inRows),
+    [instances, groundWidth, groundLength, inRows]);
 
     const baseGeom = useMemo(() =>
         new THREE.PlaneGeometry(baseWidth, baseHeight, 1, joints).translate(0, baseHeight / 2, 0),
@@ -121,7 +121,7 @@ export default function Grass({
     )
 }
 
-function getAttributeData(instances, width, inRows=true) {
+function getAttributeData(instances, width, length, inRows = true) {
     const offsets = [];
     const orientations = [];
     const stretches = [];
@@ -135,20 +135,23 @@ function getAttributeData(instances, width, inRows=true) {
     const max = 0.25;
 
     for (let i = 0; i < instances; i++) {
-
         let offsetX;
         if (inRows) {
-            offsetX = (i * 2.0) % width - width/2 - (i%2 ? 1.5 : 0);
+            offsetX = (i * 2.0) % width - width / 2 - (i % 2 ? 1.5 : 0);
         } else {
             offsetX = Math.random() * width - width / 2;
         }
-        const offsetZ = Math.random() * width - width / 2;
+
+        // ✅ use `length` for Z spread
+        const offsetZ = Math.random() * length - length / 2;
+
         const offsetY = getYPosition(offsetX, offsetZ);
         offsets.push(offsetX, offsetY, offsetZ);
 
-        let angle = Math.PI - Math.random() * (2 * Math.PI)
-        halfRootAngleSin.push(Math.sin(0.5 * angle))
-        halfRootAngleCos.push(Math.cos(0.5 * angle))
+        // --- quaternion orientation stuff unchanged ---
+        let angle = Math.PI - Math.random() * (2 * Math.PI);
+        halfRootAngleSin.push(Math.sin(0.5 * angle));
+        halfRootAngleCos.push(Math.cos(0.5 * angle));
 
         let RotationAxis = new THREE.Vector3(0, 1, 0);
         let x = RotationAxis.x * Math.sin(angle / 2.0);
@@ -190,7 +193,7 @@ function getAttributeData(instances, width, inRows=true) {
         stretches,
         halfRootAngleCos,
         halfRootAngleSin,
-    }
+    };
 }
 
 function multiplyQuaternions(q1, q2) {

@@ -54,7 +54,7 @@ export default function Home() {
                         exit={{ opacity: 0, y: 40 }}
                         transition={{ type: "spring", stiffness: 260, damping: 25 }}
                     >
-                        <h1 className={`font-geist font-extrabold text-3xl/5 md:text-7xl text-shadow-lg`} >
+                        <h1 className={`text-white font-geist font-extrabold text-3xl/5 md:text-7xl text-shadow-lg`} >
                             {SECTIONS[section].title}
                         </h1>
                         <p className="mt-4 max-w-lg text-sm md:text-lg text-white text-shadow-lg">
