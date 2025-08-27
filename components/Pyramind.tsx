@@ -36,14 +36,14 @@ function ResponsiveElements() {
     if (aspect > 3) { // ultrawide (e.g. 32:9)
             //@ts-ignore
       camera.fov = 40; // widen FOV
-      camera.position.z = 12;
+      camera.position.z = 16;
     } else if (size.width < 768) {
             //@ts-ignore
       camera.fov = 50;
       camera.position.z = 18;
     } else {
             //@ts-ignore
-      camera.fov = 55;
+      camera.fov = 75;
       camera.position.z = 10;
     }
 
