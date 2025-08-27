@@ -43,7 +43,7 @@ function ResponsiveElements() {
       camera.position.z = 18;
     } else {
             //@ts-ignore
-      camera.fov = 45;
+      camera.fov = 55;
       camera.position.z = 10;
     }
 
