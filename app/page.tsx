@@ -38,7 +38,7 @@ export default function Home() {
             </div>
             <div className="absolute top-4 left-4 md:top-10 md:left-10 flex z-50 font-bold text-base/4 md:text-xl/5 text-shadow-xs text-[#002B5B]">
                 Farm<br/>
-                Manangement<br/>
+                Management<br/>
                 Information<br/>
                 System<br/>
             </div>
