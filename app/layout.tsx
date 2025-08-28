@@ -1,35 +1,29 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist } from "next/font/google";
 import "./globals.css";
 
 const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-    variable: "--font-geist-mono",
+    variable: "--font-geist-sans",
     subsets: ["latin"],
 });
 
 export const metadata: Metadata = {
-  title: "Agra Management",
-  description: "made by high-haseeb",
+    title: "Agra Management",
+    description: "made by high-haseeb",
 };
 
 export default function RootLayout({
-  children,
+    children,
 }: Readonly<{
-  children: React.ReactNode;
-}>) {
-  return (
-    <html lang="en">
-      <body
-
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        {children}
-      </body>
-    </html>
-  );
+        children: React.ReactNode;
+    }>) {
+    return (
+        <html lang="en">
+            <body
+                className={`${geistSans.variable} antialiased`}
+            >
+                {children}
+            </body>
+        </html>
+    );
 }
