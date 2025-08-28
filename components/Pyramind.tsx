@@ -27,44 +27,31 @@ export interface PyramindProps {
 }
 
 function ResponsiveElements() {
-  const { camera, size } = useThree();
+    const { camera, size } = useThree();
 
-  useEffect(() => {
-    const aspect = size.width / size.height;
+    useEffect(() => {
+        const aspect = size.width / size.height;
 
-    // Adjust FOV dynamically for ultrawide
-    if (aspect > 3) { // ultrawide (e.g. 32:9)
+        // Adjust FOV dynamically for ultrawide
+        if (aspect > 3) { // ultrawide (e.g. 32:9)
             //@ts-ignore
-      camera.fov = 40; // widen FOV
-      camera.position.z = 16;
-    } else if (size.width < 768) {
+            camera.fov = 40; // widen FOV
+            camera.position.z = 16;
+        } else if (size.width < 768) {
             //@ts-ignore
-      camera.fov = 50;
-      camera.position.z = 18;
-    } else {
+            camera.fov = 50;
+            camera.position.z = 18;
+        } else {
             //@ts-ignore
-      camera.fov = 75;
-      camera.position.z = 10;
-    }
+            camera.fov = 75;
+            camera.position.z = 10;
+        }
 
-    camera.updateProjectionMatrix();
-  }, [size, camera]);
+        camera.updateProjectionMatrix();
+    }, [size, camera]);
 
-  return <Background/>;
+    return <Background/>;
 }
-
-// Show a static background image on mobile devices where the resources are limited
-// const ImageBg = () => {
-//     const backgroundTexture = useTexture("/high-angle-farmland-view.jpg");
-//     backgroundTexture.colorSpace = THREE.SRGBColorSpace;
-//
-//     return (
-//         <mesh scale={[20, (9/16)*20, 1]} position={[0, 0, -10]}>
-//             <planeGeometry args={[1, 1]} />
-//             <meshBasicMaterial map={backgroundTexture} />
-//         </mesh>
-//     );
-// };
 
 function CloudBackground() {
 
@@ -130,32 +117,13 @@ export const Pyramind: React.FC<PyramindProps> = ({ onSectionChange }) => {
                     <Center position={[0, 0.0, 0]}>
                         <Model onSectionChange={onSectionChange} />
                     </Center>
-                    {/* <Stats/> */}
                 </Suspense>
-                {/* <Fence/> */}
                 <ambientLight color="white" intensity={4.0}/>
                 <CameraPointerMove intensity={0.1}/>
             </Canvas>
         </>
     );
 };
-
-// function Fence() {
-//     const tex = useTexture("/fence.png");
-//     tex.colorSpace = THREE.SRGBColorSpace;
-//     tex.wrapS = THREE.RepeatWrapping;
-//     tex.wrapT = THREE.RepeatWrapping;
-//     tex.repeat.set(40, 1);
-//     return (
-//         <mesh 
-//             rotation={[0, Math.PI/2, 0]}
-//             position={[-3.6, -1.5, -40]}
-//         >
-//             <planeGeometry args={[100, 1.0, 1, 1]}/>
-//             <meshStandardMaterial color="white" map={tex} transparent />
-//         </mesh>
-//     )
-// }
 
 function CameraPointerMove({ intensity = 0.08 }) { 
     const target = useRef(new THREE.Vector3());
@@ -171,42 +139,11 @@ function CameraPointerMove({ intensity = 0.08 }) {
 const Background = () => {
     const texture = useTexture("/grass.webp");
     texture.colorSpace = THREE.SRGBColorSpace;
-
-    // const cow = useTexture("/cow.png");
-    // cow.colorSpace = THREE.SRGBColorSpace;
-    //
-    // const tree = useTexture("/tree-1.png");
-    // tree.colorSpace = THREE.SRGBColorSpace;
-    //
-    // const tree2 = useTexture("/tree-2.png");
-    // tree2.colorSpace = THREE.SRGBColorSpace;
-
     return (
-        <>
-            <mesh position={[0, 0.0, -50]} scale={[50.0,9/16*50.0,1.0]}>
-                <planeGeometry/>
-                <meshBasicMaterial map={texture} transparent/>
-            </mesh>
-
-            {/* <mesh position={[-5, -1.2, -20]} scale={[-1.3, 1.3, 1.3]}> */}
-            {/*     <planeGeometry/> */}
-            {/*     <meshBasicMaterial map={cow} transparent opacity={0.8} color="#cccccc"/> */}
-            {/* </mesh> */}
-            {/* <mesh position={[-6, -1.3, -15]} scale={1.2}> */}
-            {/*     <planeGeometry/> */}
-            {/*     <meshBasicMaterial map={cow} transparent opacity={0.8} color="#dddddd"/> */}
-            {/* </mesh> */}
-            {/**/}
-            {/* <mesh position={[-11, -0.2, -20]} scale={[2.5, 2.5, 1]}> */}
-            {/*     <planeGeometry/> */}
-            {/*     <meshBasicMaterial map={tree} transparent opacity={1.0} color="white"/> */}
-            {/* </mesh> */}
-            {/**/}
-            {/* <mesh position={[-13, -0.2, -30]} scale={[-2.5, 2.5, 1]}> */}
-            {/*     <planeGeometry/> */}
-            {/*     <meshBasicMaterial map={tree} transparent opacity={1.0} color="white"/> */}
-            {/* </mesh> */}
-        </>
+        <mesh position={[0, 0.0, -50]} scale={[50.0,9/16*50.0,1.0]}>
+            <planeGeometry/>
+            <meshBasicMaterial map={texture} transparent/>
+        </mesh>
     );
 }
 
