@@ -19,9 +19,10 @@ const fragmentShader = `
 varying vec2 vUv; 
 varying vec3 vPosition; 
 uniform float uTime;
-uniform float uAspect;
+uniform float uWidth;
+uniform float uHeight;
 
-// Lets make a fBm
+// lets make a fbm
 float random (in vec2 st) {
     return fract(sin(dot(st.xy, vec2(12.9898,78.233)))* 43758.5453123);
 }
@@ -30,7 +31,7 @@ float noise (in vec2 st) {
     vec2 i = floor(st);
     vec2 f = fract(st);
 
-    // Four corners in 2D of a tile
+    // four corners in 2d of a tile
     float a = random(i);
     float b = random(i + vec2(1.0, 0.0));
     float c = random(i + vec2(0.0, 1.0));
@@ -61,14 +62,14 @@ float fbm (in vec2 st) {
 
 void main() {
     vec3 color = vec3(0.686,0.831,1.);
-    float delta = smoothstep(0.3, 0.8, fbm(vec2(vUv.x * uAspect, vUv.y) * 20.0 + (uTime*0.1)));
+    float delta = smoothstep(0.3, 0.8, fbm(vec2(vUv) * (uWidth/uHeight) * 4.0 + (uTime*0.1)));
     color = color * (1.0 - delta) + delta;
     gl_FragColor = vec4(color, 1.0);
 }`;
 
 export function Clouds() {
     const meshRef = useRef<THREE.Mesh>(null);
-    const { viewport } = useThree();
+    const { size } = useThree();
 
     useFrame(({ clock }) => {
         const time = clock.getElapsedTime();
@@ -85,7 +86,8 @@ export function Clouds() {
                 args={[{
                     uniforms: {
                         uTime: { value: 0.0 },
-                        uAspect: { value: viewport.width/viewport.height }
+                        uWidth: { value: size.width },
+                        uHeight: { value: size.height }
                     },
                     vertexShader: vertexShader,
                     fragmentShader: fragmentShader,
