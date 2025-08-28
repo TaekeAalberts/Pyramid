@@ -62,7 +62,7 @@ void main() {
     vec3 color = vec3(0.686,0.831,1.);
     float delta = smoothstep(0.3, 0.8, fbm(vUv * 5.0 + (uTime*0.1)));
     color = color * (1.0 - delta) + delta;
-    gl_FragColor = vec4(color, 1.0);
+    gl_FragColor = vec4(vUv.xyx, 1.0);
 }`;
 
 export function Clouds() {
