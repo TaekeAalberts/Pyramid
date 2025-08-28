@@ -105,7 +105,7 @@ export const Pyramind: React.FC<PyramindProps> = ({ onSectionChange }) => {
                 {/* <OrbitControls/> */}
                 {/* <Hills/> */}
                 <Suspense fallback={null}>
-                    {/* <CloudBackground/> */}
+                    <CloudBackground/>
                     <BackgroundClouds/>
                     <PerspectiveCamera
                         makeDefault

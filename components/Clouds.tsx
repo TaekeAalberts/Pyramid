@@ -56,7 +56,7 @@ float fbm_9( in vec2 x )
     float s = 0.55;
     float a = 0.0;
     float b = 0.5;
-    for( int i=ZERO; i<9; i++ )
+    for( int i=ZERO; i<12; i++ )
     {
         float n = noise(x);
         a += b*n;
