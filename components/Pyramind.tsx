@@ -7,7 +7,7 @@ import {
     Loader,
     PerspectiveCamera,
     // OrbitControls,
-    // Clouds, Cloud,
+    Clouds, Cloud,
     // Stats
 } from "@react-three/drei";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
@@ -15,12 +15,12 @@ import {
     useRef,
     useState,
     useEffect,
-    // useMemo,
+    useMemo,
     Suspense
 } from "react";
 import * as THREE from "three";
 // import Grass from "./Grass";
-import { Clouds, /*Hills*/ } from "./Clouds";
+import { Clouds as BackgroundClouds, /*Hills*/ } from "./Clouds";
 
 export interface PyramindProps {
     onSectionChange?: (index: number) => void;
@@ -66,72 +66,49 @@ function ResponsiveElements() {
 //     );
 // };
 
-// function CloudBackground() {
-//   const cloudRefs = [useRef<THREE.Group>(null), useRef<THREE.Group>(null), useRef<THREE.Group>(null), useRef<THREE.Group>(null)];
-//
-//   useFrame(({ clock }, delta) => {
-//     const t = clock.getElapsedTime();
-//     const baseSpeeds = [0.1, 0.15, 0.2, 0.25]; // very slow "wind"
-//     const bounds = 5;
-//
-//     cloudRefs.forEach((ref, i) => {
-//       if (ref.current) {
-//         // base horizontal drift (wind)
-//         ref.current.position.x += delta * baseSpeeds[i] * 2.0;
-//
-//         // wrap horizontally
-//         if (ref.current.position.x > bounds) {
-//           ref.current.position.x = -bounds;
-//         }
-//
-//         // gentle vertical oscillation (different phases per cloud)
-//         ref.current.position.y += Math.sin(t * 0.1 + i) * 0.002;
-//
-//         // slight forward/back jiggle
-//         ref.current.position.z += Math.sin(t * 0.07 + i * 2.0) * 0.001;
-//
-//         // optional: slow breathing (scale change)
-//         const s = 1 + Math.sin(t * 0.05 + i) * 0.02;
-//         ref.current.scale.setScalar(s);
-//       }
-//     });
-//   });
-//
-//   const cloudElements = useMemo(() => {
-//     return [
-//       <Clouds key="c1" material={THREE.MeshBasicMaterial}>
-//         <Cloud seed={1} segments={40} speed={0.2} bounds={[1, 1, 1]} volume={1.5} color="white" opacity={0.85} fade={40} growth={2.5} />
-//       </Clouds>,
-//       <Clouds key="c2" material={THREE.MeshBasicMaterial}>
-//         <Cloud seed={2} segments={40} speed={0.2} bounds={[2, 1.5, 1]} volume={2} color="white" opacity={0.8} fade={50} growth={3} />
-//       </Clouds>,
-//       <Clouds key="c3" material={THREE.MeshBasicMaterial}>
-//         <Cloud seed={3} segments={40} speed={0.2} bounds={[3, 2, 1]} volume={2.5} color="white" opacity={0.75} fade={60} growth={3} />
-//       </Clouds>,
-//       <Clouds key="c4" material={THREE.MeshBasicMaterial}>
-//         <Cloud seed={4} segments={40} speed={0.2} bounds={[4, 2.5, 1]} volume={3} color="white" opacity={0.7} fade={70} growth={3.5} />
-//       </Clouds>,
-//     ];
-//   }, []);
-//
-//   return (
-//     <group>
-//       <group ref={cloudRefs[0]} position={[-10, 3, -20]}>
-//         {cloudElements[0]}
-//       </group>
-//       <group ref={cloudRefs[1]} position={[-15, 4, -25]}>
-//         {cloudElements[1]}
-//       </group>
-//       <group ref={cloudRefs[2]} position={[-30, 5, -35]}>
-//         {cloudElements[2]}
-//       </group>
-//       <group ref={cloudRefs[3]} position={[-25, 6, -35]}>
-//         {cloudElements[3]}
-//       </group>
-//     </group>
-//   );
-// }
-//
+function CloudBackground() {
+
+    const cloudElements = useMemo(() => (
+        <Clouds material={THREE.MeshStandardMaterial} position={[0, 8, -40]}>
+            <Cloud 
+                position={[-10, 0, 0]}
+                segments={40} 
+                speed={0.4} 
+                bounds={[8, 2, 1]} 
+                volume={3.5} 
+                color="white" 
+                opacity={0.85} 
+                fade={80} 
+                growth={2.5} 
+            />
+            <Cloud 
+                position={[14, 0, 0]}
+                segments={40} 
+                speed={0.4} 
+                bounds={[6, 2, 1]} 
+                volume={3.5} 
+                color="white" 
+                opacity={0.85} 
+                fade={80} 
+                growth={2.5} 
+            />
+            <Cloud 
+                seed={1} 
+                segments={40} 
+                speed={0.4} 
+                bounds={[4, 1, 1]} 
+                volume={1.5} 
+                color="white" 
+                opacity={0.85} 
+                fade={80} 
+                growth={2.5} 
+            />
+        </Clouds>
+    ), []);
+
+    return <>{cloudElements}</>;
+}
+
 
 export const Pyramind: React.FC<PyramindProps> = ({ onSectionChange }) => {
     return (
@@ -141,7 +118,8 @@ export const Pyramind: React.FC<PyramindProps> = ({ onSectionChange }) => {
                 {/* <OrbitControls/> */}
                 {/* <Hills/> */}
                 <Suspense fallback={null}>
-                    <Clouds/>
+                    <CloudBackground/>
+                    <BackgroundClouds/>
                     <PerspectiveCamera
                         makeDefault
                         fov={75}
@@ -155,7 +133,7 @@ export const Pyramind: React.FC<PyramindProps> = ({ onSectionChange }) => {
                     {/* <Stats/> */}
                 </Suspense>
                 {/* <Fence/> */}
-                <ambientLight color="white" intensity={0.6}/>
+                <ambientLight color="white" intensity={4.0}/>
                 <CameraPointerMove intensity={0.1}/>
             </Canvas>
         </>
@@ -271,7 +249,7 @@ void main() {
             gl_FragColor = vec4(glow, 1.0);
         }
     } else {
-        if (upFacing > 0.7) discard;
+        if (upFacing > 0.7 || downFacing > 0.7) discard;
         vec3 glow = mix(lightBlue, vec3(0.2, 0.8, 1.0), fresnel * anim);
         gl_FragColor = vec4(glow, 0.4);
     }

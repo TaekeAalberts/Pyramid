@@ -36,11 +36,11 @@ export default function Home() {
             <div className="w-full h-full">
                 <Pyramind onSectionChange={setSection} />
             </div>
-            <div className="absolute top-4 left-4 md:top-10 md:left-10 flex z-50 font-bold text-base/4 md:text-xl/5 text-shadow-xs text-[#002B5B]">
-                Farm<br/>
-                Management<br/>
-                Information<br/>
-                System<br/>
+            <div className="absolute top-4 left-4 md:top-10 md:left-10 flex flex-col z-50 font-bold text-base/4 md:text-3xl/7 text-shadow-xs text-[#002B5B] font-mono">
+                <div><span className="text-[800]">F</span>arm</div>
+                <div>Management</div>
+                <div>Information</div>
+                <div>System</div>
             </div>
             <div className="absolute top-4 right-4 md:top-10 md:right-10 text-xl md:text-4xl font-bold text-shadow-sm text-[#002B5B]">Friedland Dairy</div>
 
@@ -48,7 +48,7 @@ export default function Home() {
                 {section !== -1 && (
                     <motion.div
                         key={`headline-${section}`}
-                        className="pointer-events-none absolute bottom-4 md:bottom-10 left-0 right-0 flex flex-col items-start justify-end p-4 pb-0 md:p-20 z-20 text-shadow-lg"
+                        className="pointer-events-none absolute bottom-4 md:bottom-10 left-0 right-0 flex flex-col items-start justify-end p-4 pb-0 md:p-20 md:pb-10 z-20 text-shadow-lg"
                         initial={{ opacity: 0, y: 40 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: 40 }}
