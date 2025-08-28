@@ -106,7 +106,7 @@ export const Pyramind: React.FC<PyramindProps> = ({ onSectionChange }) => {
                 {/* <Hills/> */}
                 <Suspense fallback={null}>
                     <CloudBackground/>
-                    <BackgroundClouds/>
+                    {/* <BackgroundClouds/> */}
                     <PerspectiveCamera
                         makeDefault
                         fov={75}
