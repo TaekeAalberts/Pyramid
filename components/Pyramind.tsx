@@ -78,7 +78,7 @@ function CloudBackground() {
                     volume={3.5}
                     color="white"
                     opacity={0.85}
-                    speed={0.5}
+                    speed={0.1}
                     fade={80}
                     growth={2.5}
                 />
@@ -93,7 +93,7 @@ function CloudBackground() {
                     color="white"
                     opacity={0.85}
                     fade={80}
-                    speed={0.5}
+                    speed={0.1}
                     growth={4.5}
                 />
                 <Cloud
@@ -107,7 +107,7 @@ function CloudBackground() {
                     color="white"
                     opacity={0.85}
                     fade={80}
-                    speed={0.5}
+                    speed={0.1}
                     growth={2.5}
                 />
             </Clouds>
@@ -122,7 +122,7 @@ function CloudBackground() {
       if (!cloud) return; // skip unmounted refs
       const dir = directions.current[i];
 
-      cloud.position.x += dir.x * delta;
+      cloud.position.x += dir.x * delta * 0.1;
       cloud.position.y += Math.sin(Date.now() * 0.0005 + i) * 0.001;
 
       // Bounce horizontally
