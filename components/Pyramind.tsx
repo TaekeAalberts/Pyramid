@@ -20,7 +20,7 @@ import {
 } from "react";
 import * as THREE from "three";
 // import Grass from "./Grass";
-import { Clouds as BackgroundClouds, /*Hills*/ } from "./Clouds";
+// import { Clouds as BackgroundClouds, /*Hills*/ } from "./Clouds";
 
 export interface PyramindProps {
     onSectionChange?: (index: number) => void;
@@ -53,49 +53,92 @@ function ResponsiveElements() {
     return <Background/>;
 }
 
+
 function CloudBackground() {
+    // Explicit type for refs (nullable until mounted)
+    const cloudRefs = useRef<(THREE.Object3D | null)[]>([]);
 
-    const cloudElements = useMemo(() => (
-        <Clouds material={THREE.MeshStandardMaterial} position={[0, 8, -40]}>
-            <Cloud 
-                position={[-10, 0, 0]}
-                segments={40} 
-                speed={0.4} 
-                bounds={[8, 2, 1]} 
-                volume={3.5} 
-                color="white" 
-                opacity={0.85} 
-                fade={80} 
-                growth={2.5} 
-            />
-            <Cloud 
-                position={[14, 0, 0]}
-                segments={40} 
-                speed={0.4} 
-                bounds={[6, 2, 1]} 
-                volume={3.5} 
-                color="white" 
-                opacity={0.85} 
-                fade={80} 
-                growth={2.5} 
-            />
-            <Cloud 
-                seed={1} 
-                segments={40} 
-                speed={0.4} 
-                bounds={[4, 1, 1]} 
-                volume={1.5} 
-                color="white" 
-                opacity={0.85} 
-                fade={80} 
-                growth={2.5} 
-            />
-        </Clouds>
-    ), []);
+    // Directions with x/y speeds for each cloud
+    const directions = useRef<{ x: number; y: number }[]>([
+        { x: 0.3, y: 0.05 },
+        { x: -0.25, y: 0.04 },
+        { x: 0.2, y: 0.03 },
+    ]);
 
-    return <>{cloudElements}</>;
+    const cloudElements = useMemo(
+        () => (
+            <Clouds material={THREE.MeshStandardMaterial} position={[0, 8, -40]}>
+                <Cloud
+                    // Type narrowing: THREE.Object3D | null
+                    // @ts-ignore
+                    ref={(el) => (cloudRefs.current[0] = el)}
+                    position={[-10, 0, 0]}
+                    segments={40}
+                    bounds={[8, 2, 1]}
+                    volume={3.5}
+                    color="white"
+                    opacity={0.85}
+                    speed={0.5}
+                    fade={80}
+                    growth={2.5}
+                />
+                <Cloud
+
+                    // @ts-ignore
+                    ref={(el) => (cloudRefs.current[1] = el)}
+                    position={[14, 0, 0]}
+                    segments={40}
+                    bounds={[6, 2, 1]}
+                    volume={3.5}
+                    color="white"
+                    opacity={0.85}
+                    fade={80}
+                    speed={0.5}
+                    growth={4.5}
+                />
+                <Cloud
+
+                    // @ts-ignore
+                    ref={(el) => (cloudRefs.current[2] = el)}
+                    position={[0, -1, 0]}
+                    segments={40}
+                    bounds={[4, 1, 1]}
+                    volume={1.5}
+                    color="white"
+                    opacity={0.85}
+                    fade={80}
+                    speed={0.5}
+                    growth={2.5}
+                />
+            </Clouds>
+        ),
+        []
+    );
+
+  const bounds = { x: 20, y: 4 }; // roaming limits
+
+  useFrame((_, delta) => {
+    cloudRefs.current.forEach((cloud, i) => {
+      if (!cloud) return; // skip unmounted refs
+      const dir = directions.current[i];
+
+      cloud.position.x += dir.x * delta;
+      cloud.position.y += Math.sin(Date.now() * 0.0005 + i) * 0.001;
+
+      // Bounce horizontally
+      if (cloud.position.x > bounds.x || cloud.position.x < -bounds.x) {
+        dir.x *= -1;
+      }
+
+      // Bounce vertically
+      if (cloud.position.y > bounds.y || cloud.position.y < -bounds.y) {
+        dir.y *= -1;
+      }
+    });
+  });
+
+  return <>{cloudElements}</>;
 }
-
 
 export const Pyramind: React.FC<PyramindProps> = ({ onSectionChange }) => {
     return (
