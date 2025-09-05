@@ -3,6 +3,7 @@
 import { Pyramind } from "@/components/Pyramind";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import Image from "next/image";
 
 const SECTIONS = [
   {
@@ -42,7 +43,12 @@ export default function Home() {
                 <div><span className="font-black">I</span>nformation</div>
                 <div><span className="font-black">S</span>ystem</div>
             </div>
-            <div className="absolute top-4 right-4 md:top-10 md:right-10 text-xl md:text-4xl font-bold text-shadow-sm text-[#002B5B]">Friedland Dairy</div>
+            <div 
+                className="absolute top-4 right-4 md:top-10 md:right-10 text-xl md:text-4xl font-bold text-shadow-sm text-[#002B5B] flex flex-col gap-2 items-end">Friedland Dairy
+                <a href="https://aalbertskarade.sharepoint.com/sites/FriedlandDairy">
+                    <Image src="/finder.gif" width={48} height={48} alt="finder" className="mix-blend-multiply" />
+                </a>
+            </div>
 
             <AnimatePresence>
                 {section !== -1 && (
