@@ -2,30 +2,26 @@
 
 import { Pyramind } from "@/components/Pyramind";
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
 
 const SECTIONS = [
-  {
-    title: "Finanzen",
-    color: "text-sky-300",
-    description: "Umsatz, Kosten und Profitabilität überwachen"
-  },
-  {
-    title: "Produkt",
-    color: "text-emerald-300",
-    description: "Produktleistung, Funktionen und Qualität überwachen"
-  },
-  {
-    title: "Interne Prozesse",
-    color: "text-amber-300",
-    description: "Leistungsfähigkeit und Stabilität der Arbeitsabläufe beurteilen"
-  },
-  {
-    title: "Ressourcen",
-    color: "text-pink-300",
-    description: "Teamkapazitäten, Tools und Infrastruktur verwalten"
-  }
+    {
+        title: "Finanzen",
+        description: "Umsatz, Kosten und Profitabilität überwachen"
+    },
+    {
+        title: "Produkt",
+        description: "Produktleistung, Funktionen und Qualität überwachen"
+    },
+    {
+        title: "Interne Prozesse",
+        description: "Leistungsfähigkeit und Stabilität der Arbeitsabläufe beurteilen"
+    },
+    {
+        title: "Ressourcen",
+        description: "Teamkapazitäten, Tools und Infrastruktur verwalten"
+    }
 ];
 
 export default function Home() {
@@ -33,16 +29,16 @@ export default function Home() {
 
     return (
         <div className="relative w-full h-dvh overflow-hidden bg-[#181818]">
-            {/* 3‑D scene */}
-            <div className="w-full h-full">
-                <Pyramind onSectionChange={setSection} />
-            </div>
+
+            <Pyramind onSectionChange={setSection} />
+
             <div className="absolute top-4 left-4 md:top-10 md:left-10 flex flex-col z-50 font-normal text-base/4 md:text-3xl/7 text-shadow-xs text-[#002B5B]">
                 <div><span className="font-black">F</span>arm</div>
                 <div><span className="font-black">M</span>anagement</div>
                 <div><span className="font-black">I</span>nformation</div>
                 <div><span className="font-black">S</span>ystem</div>
             </div>
+
             <div 
                 className="absolute top-4 right-4 md:top-10 md:right-10 text-xl md:text-4xl font-bold text-shadow-sm text-[#002B5B] flex flex-col gap-2 items-end">Friedland Dairy
                 <a href="https://aalbertskarade.sharepoint.com/sites/FriedlandDairy">
