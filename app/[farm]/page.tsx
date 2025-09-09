@@ -51,7 +51,7 @@ export default function FarmPage({ params }: { params: Promise<{farm: string}> }
 
                     <div className="absolute top-4 right-4 md:top-10 md:right-10 text-xl md:text-4xl font-bold text-shadow-sm text-[#002B5B] flex flex-col gap-2 items-end">
                         {config.name}
-                        <a href={config.link}>
+                        <a href={config.link} target="_parent" rel="noopener noreferrer">
                             <Image src="/finder.gif" width={48} height={48} alt="finder" className="mix-blend-multiply" />
                         </a>
                     </div>
