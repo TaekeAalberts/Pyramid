@@ -11,7 +11,6 @@ import {
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { 
     useRef,
-    useState,
     useEffect,
     useMemo,
     Suspense
@@ -240,7 +239,7 @@ gl_FragColor = vec4(glow, 0.4);
 const pieceHeight = 2 / 4;
 const lerp = (x: number, y: number, t: number): number => x + (y - x) * t;
 
-export const Model: React.FC<PyramindProps> = ({ onSectionChange, sections }) => {
+const Model: React.FC<PyramindProps> = ({ onSectionChange, sections }) => {
     const { nodes } = useGLTF("/Pyramind.glb") as any;
 
     const refs = [useRef<THREE.Group>(null), useRef<THREE.Group>(null), useRef<THREE.Group>(null), useRef<THREE.Group>(null)];
@@ -249,7 +248,7 @@ export const Model: React.FC<PyramindProps> = ({ onSectionChange, sections }) =>
     const groupRef = useRef<THREE.Group>(null);
     const gridRef = useRef<any>(null);
 
-    const textureUrls = useMemo(() => sections.map((s) => s.icon), [sections]);
+    const textureUrls = useMemo(() => sections.map((s) => s.icon).reverse(), [sections]);
     const maps = useTexture(textureUrls);
 
     const baseColor = new THREE.Color("#2080ff");
@@ -297,8 +296,7 @@ export const Model: React.FC<PyramindProps> = ({ onSectionChange, sections }) =>
             });
         });
 
-        // ✅ sprite scale animation
-        spriteRefs.forEach((sprite, index) => {
+        spriteRefs.forEach((sprite, _index) => {
             if (!sprite.current) return;
             const isHovered = hoverIndexRef.current !== null; 
             const targetScale = isHovered ? 0.3 : 0.2; // grow when hovered
@@ -312,7 +310,6 @@ export const Model: React.FC<PyramindProps> = ({ onSectionChange, sections }) =>
             );
         });
 
-        // fire section change callback once
         if (hoverIndexRef.current !== lastHoverIndex.current) {
             onSectionChange?.(hoverIndexRef.current);
             lastHoverIndex.current = hoverIndexRef.current;
@@ -357,7 +354,7 @@ export const Model: React.FC<PyramindProps> = ({ onSectionChange, sections }) =>
                         name={`sprite-${index}`}
                         renderOrder={100}
                         onClick={() => {
-                            const url = sections[index].link;
+                            const url = sections[3 - index].link;
                             if (window.top) window.top.location.href = url;
                                 else window.location.href = url;
                         }}
