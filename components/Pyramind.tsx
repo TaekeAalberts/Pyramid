@@ -35,10 +35,9 @@ function ResponsiveElements() {
     useEffect(() => {
         const aspect = size.width / size.height;
 
-        // Adjust FOV dynamically for ultrawide
         if (aspect > 3) { // ultrawide (e.g. 32:9)
             //@ts-ignore
-            camera.fov = 40; // widen FOV
+            camera.fov = 40;
             camera.position.z = 16;
         } else if (size.width < 768) {
             //@ts-ignore
@@ -58,21 +57,18 @@ function ResponsiveElements() {
 
 
 function CloudBackground() {
-    // Explicit type for refs (nullable until mounted)
     const cloudRefs = useRef<(THREE.Object3D | null)[]>([]);
 
-    // Directions with x/y speeds for each cloud
     const directions = useRef<{ x: number; y: number }[]>([
-        { x: 0.3, y: 0.05 },
+        { x: 0.3,   y: 0.05 },
         { x: -0.25, y: 0.04 },
-        { x: 0.2, y: 0.03 },
+        { x: 0.2,   y: 0.03 },
     ]);
 
     const cloudElements = useMemo(
         () => (
             <Clouds material={THREE.MeshStandardMaterial} position={[0, 8, -40]}>
                 <Cloud
-                    // Type narrowing: THREE.Object3D | null
                     // @ts-ignore
                     ref={(el) => (cloudRefs.current[0] = el)}
                     position={[-10, 0, 0]}
@@ -86,7 +82,6 @@ function CloudBackground() {
                     growth={2.5}
                 />
                 <Cloud
-
                     // @ts-ignore
                     ref={(el) => (cloudRefs.current[1] = el)}
                     position={[14, 0, 0]}
@@ -100,7 +95,6 @@ function CloudBackground() {
                     growth={4.5}
                 />
                 <Cloud
-
                     // @ts-ignore
                     ref={(el) => (cloudRefs.current[2] = el)}
                     position={[0, -1, 0]}
@@ -118,22 +112,21 @@ function CloudBackground() {
         []
     );
 
-    const bounds = { x: 20, y: 4 }; // roaming limits
+    const bounds = { x: 20, y: 4 };
 
     useFrame((_, delta) => {
         cloudRefs.current.forEach((cloud, i) => {
-            if (!cloud) return; // skip unmounted refs
+            if (!cloud) return; 
+
             const dir = directions.current[i];
 
             cloud.position.x += dir.x * delta * 0.1;
             cloud.position.y += Math.sin(Date.now() * 0.0005 + i) * 0.001;
 
-            // Bounce horizontally
             if (cloud.position.x > bounds.x || cloud.position.x < -bounds.x) {
                 dir.x *= -1;
             }
 
-            // Bounce vertically
             if (cloud.position.y > bounds.y || cloud.position.y < -bounds.y) {
                 dir.y *= -1;
             }
@@ -190,22 +183,22 @@ const Background = () => {
     );
 }
 
-const vertexShader = `
+const vertexShader = /* glsl */`
 varying vec3 vNormal;
 varying vec3 vViewDir;
 varying vec3 vPosition;
 
 void main() {
-vNormal = normalMatrix * normal;
-vec4 viewPos = modelViewMatrix * vec4(position, 1.0);
-vViewDir = normalize(-viewPos.xyz);
-vPosition = position;
+    vNormal = normalMatrix * normal;
+    vec4 viewPos = modelViewMatrix * vec4(position, 1.0);
+    vViewDir = normalize(-viewPos.xyz);
+    vPosition = position;
 
-gl_Position = projectionMatrix * viewPos;
+    gl_Position = projectionMatrix * viewPos;
 }
 `;
 
-const fragmentShader = `
+const fragmentShader = /* glsl */`
 uniform bool uIsHover;
 varying vec2 vUv;
 varying vec3 vPosition;
@@ -214,25 +207,25 @@ varying vec3 vNormal;
 varying vec3 vViewDir;
 
 void main() {
-vec3 lightBlue = vec3(0.0,0.169,0.357);
+    vec3 lightBlue = vec3(0.0,0.169,0.357);
 
-float fresnel = pow(1.0 - dot(normalize(vNormal), normalize(vViewDir)), 2.0);
-float anim = sin(uTime * 2.0 + vPosition.y * 5.0) * 0.5 + 0.5;
+    float fresnel = pow(1.0 - dot(normalize(vNormal), normalize(vViewDir)), 2.0);
+    float anim = sin(uTime * 2.0 + vPosition.y * 5.0) * 0.5 + 0.5;
 
-float upFacing = dot(vNormal, vec3(0.0, 1.0, 0.0));
-float downFacing = dot(-vNormal, vec3(0.0, 1.0, 0.0)); 
-if (uIsHover) {
-if (upFacing > 0.7 || downFacing > 0.7) {
-gl_FragColor = vec4(1.0);
-} else {
-vec3 glow = mix(lightBlue, vec3(0.2, 0.8, 1.0), fresnel * anim);
-gl_FragColor = vec4(glow, 1.0);
-}
-} else {
-if (upFacing > 0.7 || downFacing > 0.7) discard;
-vec3 glow = mix(lightBlue, vec3(0.2, 0.8, 1.0), fresnel * anim);
-gl_FragColor = vec4(glow, 0.4);
-}
+    float upFacing = dot(vNormal, vec3(0.0, 1.0, 0.0));
+    float downFacing = dot(-vNormal, vec3(0.0, 1.0, 0.0)); 
+    if (uIsHover) {
+        if (upFacing > 0.7 || downFacing > 0.7) {
+            gl_FragColor = vec4(1.0);
+        } else {
+            vec3 glow = mix(lightBlue, vec3(0.2, 0.8, 1.0), fresnel * anim);
+            gl_FragColor = vec4(glow, 1.0);
+        }
+    } else {
+        if (upFacing > 0.7 || downFacing > 0.7) discard;
+        vec3 glow = mix(lightBlue, vec3(0.2, 0.8, 1.0), fresnel * anim);
+        gl_FragColor = vec4(glow, 0.4);
+    }
 }
 `;
 
@@ -242,41 +235,32 @@ const lerp = (x: number, y: number, t: number): number => x + (y - x) * t;
 const Model: React.FC<PyramindProps> = ({ onSectionChange, sections }) => {
     const { nodes } = useGLTF("/Pyramind.glb") as any;
 
-    const refs = [useRef<THREE.Group>(null), useRef<THREE.Group>(null), useRef<THREE.Group>(null), useRef<THREE.Group>(null)];
-    const spriteRefs = [useRef<THREE.Sprite>(null), useRef<THREE.Sprite>(null), useRef<THREE.Sprite>(null), useRef<THREE.Sprite>(null)];
+    const refs = [
+        useRef<THREE.Group>(null),
+        useRef<THREE.Group>(null),
+        useRef<THREE.Group>(null),
+        useRef<THREE.Group>(null)
+    ];
+    const spriteRefs = [
+        useRef<THREE.Sprite>(null),
+        useRef<THREE.Sprite>(null),
+        useRef<THREE.Sprite>(null),
+        useRef<THREE.Sprite>(null)
+    ];
 
     const groupRef = useRef<THREE.Group>(null);
-    const gridRef = useRef<any>(null);
 
     const textureUrls = useMemo(() => sections.map((s) => s.icon).reverse(), [sections]);
     const maps = useTexture(textureUrls);
 
-    const baseColor = new THREE.Color("#2080ff");
-    const hoverColor = new THREE.Color("#ffffff");
-    const activeGridColor = baseColor.clone();
-
     const hoverIndexRef = useRef<number | null>(null);
     const lastHoverIndex = useRef<number | null>(null);
-
 
     useFrame(({ clock }) => {
         const time = clock.getElapsedTime();
 
-        // group rotation
         if (groupRef.current) groupRef.current.rotation.y += 0.005;
 
-        // grid color
-        if (gridRef.current) {
-            if (hoverIndexRef.current !== null && hoverIndexRef.current >= 0) {
-                activeGridColor.lerp(hoverColor, 0.1);
-            } else {
-                activeGridColor.lerp(baseColor, 0.01);
-            }
-            gridRef.current.material.uniforms.cellColor.value = activeGridColor;
-            gridRef.current.material.uniforms.sectionColor.value = activeGridColor;
-        }
-
-        // block animations
         refs.forEach((ref, index) => {
             const group = ref.current;
             if (!group) return;
@@ -299,7 +283,7 @@ const Model: React.FC<PyramindProps> = ({ onSectionChange, sections }) => {
         spriteRefs.forEach((sprite, _index) => {
             if (!sprite.current) return;
             const isHovered = hoverIndexRef.current !== null; 
-            const targetScale = isHovered ? 0.3 : 0.2; // grow when hovered
+            const targetScale = isHovered ? 0.3 : 0.2;
             const currentScale = sprite.current.scale.x;
             const newScale = lerp(currentScale, targetScale, 0.1);
             sprite.current.scale.set(newScale, newScale, newScale);
@@ -331,7 +315,10 @@ const Model: React.FC<PyramindProps> = ({ onSectionChange, sections }) => {
                             <shaderMaterial
                                 args={[
                                     {
-                                        uniforms: { uIsHover: { value: false }, uTime: { value: 0 } },
+                                        uniforms: { 
+                                            uIsHover: { value: false },
+                                            uTime:    { value: 0 }
+                                        },
                                         vertexShader,
                                         fragmentShader,
                                     },
@@ -354,9 +341,13 @@ const Model: React.FC<PyramindProps> = ({ onSectionChange, sections }) => {
                         name={`sprite-${index}`}
                         renderOrder={100}
                         onClick={() => {
+                            // NOTE: We use this site inside an iframe, therefore we need to update the parent site url
                             const url = sections[3 - index].link;
-                            if (window.top) window.top.location.href = url;
-                                else window.location.href = url;
+                            if (window.top) {
+                                window.top.location.href = url;
+                            } else {
+                                window.location.href = url;
+                            } 
                         }}
                         onPointerOver={() => (document.body.style.cursor = "pointer")}
                         onPointerLeave={() => (document.body.style.cursor = "default")}
