@@ -1,0 +1,30 @@
+{
+    "name": "Below Farm",
+    "link": "https://aalbertskarade.sharepoint.com/sites/BelowFarm",
+    "sections": [
+        {
+            "name": "Finanzen",
+            "desc": "Umsatz, Kosten und Profitabilität überwachen",
+            "icon": "/euro.png",
+            "link": "https://fmis.aalberts-kara.de/bff/finanzen/"
+        },
+        {
+            "name": "Produkt",
+            "desc": "Produktleistung, Funktionen und Qualität überwachen",
+            "icon": "/package.png",
+            "link": "https://fmis.aalberts-kara.de/bff/produkt/"
+        },
+        {
+            "name": "Interne Prozesse",
+            "desc": "Leistungsfähigkeit und Stabilität der Arbeitsabläufe beurteilen",
+            "icon": "/gear.png",
+            "link": "https://fmis.aalberts-kara.de/bff/interne-prozesse/"
+        },
+        {
+            "name": "Ressourcen",
+            "desc": "Teamkapazitäten, Tools und Infrastruktur verwalten",
+            "icon": "/group.png",
+            "link": "https://fmis.aalberts-kara.de/bff/ressourcen/"
+        }
+    ]
+}

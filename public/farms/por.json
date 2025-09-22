@@ -1,0 +1,30 @@
+{
+    "name": "Poortinga",
+    "link": "https://aalbertskarade.sharepoint.com/sites/Poortinga",
+    "sections": [
+        {
+            "name": "Finanzen",
+            "desc": "Umsatz, Kosten und Profitabilität überwachen",
+            "icon": "/euro.png",
+            "link": "https://fmis.aalberts-kara.de/por/finanzen/"
+        },
+        {
+            "name": "Produkt",
+            "desc": "Produktleistung, Funktionen und Qualität überwachen",
+            "icon": "/package.png",
+            "link": "https://fmis.aalberts-kara.de/por/produkt/"
+        },
+        {
+            "name": "Interne Prozesse",
+            "desc": "Leistungsfähigkeit und Stabilität der Arbeitsabläufe beurteilen",
+            "icon": "/gear.png",
+            "link": "https://fmis.aalberts-kara.de/por/interne-prozesse/"
+        },
+        {
+            "name": "Ressourcen",
+            "desc": "Teamkapazitäten, Tools und Infrastruktur verwalten",
+            "icon": "/group.png",
+            "link": "https://fmis.aalberts-kara.de/por/ressourcen/"
+        }
+    ]
+}

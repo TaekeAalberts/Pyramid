@@ -1,0 +1,30 @@
+{
+    "name": "Snel",
+    "link": "https://aalbertskarade.sharepoint.com/sites/Snel",
+    "sections": [
+        {
+            "name": "Finanzen",
+            "desc": "Umsatz, Kosten und Profitabilität überwachen",
+            "icon": "/euro.png",
+            "link": "https://fmis.aalberts-kara.de/snm/finanzen/"
+        },
+        {
+            "name": "Produkt",
+            "desc": "Produktleistung, Funktionen und Qualität überwachen",
+            "icon": "/package.png",
+            "link": "https://fmis.aalberts-kara.de/snm/produkt/"
+        },
+        {
+            "name": "Interne Prozesse",
+            "desc": "Leistungsfähigkeit und Stabilität der Arbeitsabläufe beurteilen",
+            "icon": "/gear.png",
+            "link": "https://fmis.aalberts-kara.de/snm/interne-prozesse/"
+        },
+        {
+            "name": "Ressourcen",
+            "desc": "Teamkapazitäten, Tools und Infrastruktur verwalten",
+            "icon": "/group.png",
+            "link": "https://fmis.aalberts-kara.de/snm/ressourcen/"
+        }
+    ]
+}
