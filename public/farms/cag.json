@@ -4,25 +4,25 @@
     "sections": [
         {
             "name": "Finanzen",
-            "desc": "Umsatz, Kosten und Profitabilität überwachen",
+            "desc": "Finanzbericht",
             "icon": "/euro.png",
             "link": "https://fmis.aalberts-kara.de/cag/finanzen/"
         },
         {
             "name": "Produkt",
-            "desc": "Produktleistung, Funktionen und Qualität überwachen",
+            "desc": "Milchproduktion",
             "icon": "/package.png",
             "link": "https://fmis.aalberts-kara.de/cag/produkt/"
         },
         {
             "name": "Interne Prozesse",
-            "desc": "Leistungsfähigkeit und Stabilität der Arbeitsabläufe beurteilen",
+            "desc": "Herdemanagement",
             "icon": "/gear.png",
             "link": "https://fmis.aalberts-kara.de/cag/interne-prozesse/"
         },
         {
             "name": "Ressourcen",
-            "desc": "Teamkapazitäten, Tools und Infrastruktur verwalten",
+            "desc": "Klimabilanz",
             "icon": "/group.png",
             "link": "https://fmis.aalberts-kara.de/cag/ressourcen/"
         }
