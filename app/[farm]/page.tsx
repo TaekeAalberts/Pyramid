@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { Pyramind, Section } from "@/components/Pyramind";
-import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
 
 interface Config {
@@ -15,7 +14,7 @@ export default function FarmPage({ params }: { params: Promise<{farm: string}> }
 {
     const [config, setConfig] = useState<Config|null>(null);
     const [isError, setIsError] = useState<boolean>(false);
-    const [sectionIndex, setSectionIndex] = useState<number|null>(null);
+    const [_sectionIndex, setSectionIndex] = useState<number|null>(null);
 
     async function setup() {
         try {
@@ -59,37 +58,6 @@ export default function FarmPage({ params }: { params: Promise<{farm: string}> }
                             />
                         </a>
                     </div>
-
-                    <AnimatePresence>
-                        {sectionIndex !== null && (
-                            <motion.div
-                                key={`headline-${sectionIndex}`}
-className={`pointer-events-none absolute flex flex-col items-start justify-end p-4 z-20 text-shadow-lg
-  bottom-10 left-4 right-4 md:p-20
-  ${sectionIndex === 0
-    ? "md:top-[18vh] md:right-[20vw] md:left-auto md:bottom-auto"
-    : sectionIndex === 1
-    ? "md:top-[27vh] md:right-[20vw] md:left-auto md:bottom-auto"
-    : sectionIndex === 2
-    ? "md:top-[40vh] md:right-[0vw] md:left-auto md:bottom-auto"
-    : "md:top-[55vh] md:right-[5vw] md:left-auto md:bottom-auto"
-  }
-`}
-                                initial={{ opacity: 0, y: 40 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                exit={{ opacity: 0, y: 40 }}
-                                transition={{ type: "spring", stiffness: 260, damping: 25 }}
-                            >
-                                <h1 className={`text-white font-geist font-extrabold text-3xl/5 md:text-7xl/10 text-shadow-lg`} >
-                                    {config.sections[sectionIndex].name}
-                                </h1>
-                                <p className="mt-4 max-w-lg text-sm md:text-4xl text-white text-shadow-lg">
-                                    {config.sections[sectionIndex].desc}
-                                </p>
-                            </motion.div>
-                        )}
-                    </AnimatePresence>
-
                 </div>
             </>
             }

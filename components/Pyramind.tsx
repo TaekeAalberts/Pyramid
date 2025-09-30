@@ -7,6 +7,7 @@ import {
     PerspectiveCamera,
     Clouds, Cloud,
     Loader,
+    Html
 } from "@react-three/drei";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { 
@@ -358,8 +359,37 @@ const Model: React.FC<PyramindProps> = ({ onSectionChange, sections }) => {
                             transparent
                         />
                     </sprite>
+                    <SymbolText 
+                        head={sections[index].name}
+                        desc={sections[index].desc}
+                        position={[0, (3 - index) / 2 + 0.35, 0.01]}
+                        isHovered={hoverIndexRef.current === index}
+                    />
                 </group>
             ))}
         </group>
     );
 };
+
+import { motion } from "framer-motion";
+
+function SymbolText({ head, desc, position = [0, 0, 0], isHovered }: 
+    { head: string; desc: string; position?: [number, number, number]; isHovered: boolean }) {
+    return (
+        <Html position={position} style={{ pointerEvents: "none", marginLeft: "50px" }}>
+            <motion.div
+                initial={{ opacity: 0, y: "-50%" }}
+                animate={isHovered ? { opacity: 1, y: "0%" } : { opacity: 0, y: "-50%" }}
+                transition={{ duration: 0.4, ease: "easeOut" }}
+                className="text-left"
+            >
+                <div className="text-white font-geist font-extrabold text-3xl/5 md:text-6xl/4 text-shadow-lg text-nowrap">
+                    {head}
+                </div>
+                <div className="mt-4 max-w-lg text-sm md:text-3xl text-white text-shadow-lg text-nowrap">
+                    {desc}
+                </div>
+            </motion.div>
+        </Html>
+    );
+}
