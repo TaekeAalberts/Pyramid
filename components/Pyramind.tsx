@@ -36,10 +36,15 @@ function ResponsiveElements() {
     useEffect(() => {
         const aspect = size.width / size.height;
 
-        if (aspect > 3) { // ultrawide (e.g. 32:9)
+        if (aspect > 3) {
             //@ts-ignore
             camera.fov = 40;
             camera.position.z = 16;
+        }
+        else if (aspect > 4) { // ultrawide (e.g. 32:9)
+            //@ts-ignore
+            camera.fov = 30;
+            camera.position.z = 14;
         } else if (size.width < 768) {
             //@ts-ignore
             camera.fov = 50;
