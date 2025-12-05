@@ -6,25 +6,25 @@
             "name": "Finanzen",
             "desc": "Finanzbericht",
             "icon": "/euro.png",
-            "link": "https://fmis.aalberts-kara.de/snm/finanzen/"
+            "link": "https://fmis.aalberts-kara.de/snl/finanzen/"
         },
         {
             "name": "Produkt",
             "desc": "Milchproduktion",
             "icon": "/package.png",
-            "link": "https://fmis.aalberts-kara.de/snm/produkt/"
+            "link": "https://fmis.aalberts-kara.de/snl/produkt/"
         },
         {
             "name": "Interne Prozesse",
             "desc": "Herdemanagement",
             "icon": "/gear.png",
-            "link": "https://fmis.aalberts-kara.de/snm/interne-prozesse/"
+            "link": "https://fmis.aalberts-kara.de/snl/interne-prozesse/"
         },
         {
             "name": "Ressourcen",
             "desc": "Klimabilanz",
             "icon": "/group.png",
-            "link": "https://fmis.aalberts-kara.de/snm/ressourcen/"
+            "link": "https://fmis.aalberts-kara.de/snl/ressourcen/"
         }
     ]
 }
